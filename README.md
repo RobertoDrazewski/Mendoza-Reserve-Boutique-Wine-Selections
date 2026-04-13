@@ -41,6 +41,6 @@ A premium e-commerce and reservation platform dedicated to the most exclusive bo
 
 1. **Clone the repository**:
    ```bash
-   git clone [https://github.com/RobertDrazewski/Mendoza-Reserve-Boutique-Wine-Selections.git](https://github.com/RobertDrazewski/Mendoza-Reserve-Boutique-Wine-Selections.git)
+   git clone https://github.com/RobertoDrazewski/Mendoza-Reserve-Boutique-Wine-Selections.git
 2. Install dependencies: npm install
 3. Launch the cellar: npm start
