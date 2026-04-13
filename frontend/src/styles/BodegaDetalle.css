@@ -1,0 +1,130 @@
+/* Contenedor de toda la página para centrar la etiqueta */
+.detalle-page-wrapper {
+    min-height: 100vh;
+    padding: 150px 20px 100px;
+    background-color: #f4f1ea; /* Color papel hueso */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* La Etiqueta Grande Central */
+.etiqueta-central {
+    background: #ffffff;
+    max-width: 700px;
+    width: 100%;
+    padding: 60px 40px;
+    border: 1px solid #d4af37; /* Borde Dorado */
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    position: relative;
+    text-align: center;
+}
+
+/* --- CAMBIO: El Contenedor del Logo Ahora es Más Grande --- */
+.logo-container {
+    /* Aumentamos el ancho y alto del contenedor */
+    width: 200px; /* Antes: 120px */
+    height: 200px; /* Antes: 120px */
+    margin: 0 auto 40px; /* Un poco más de espacio inferior */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bodega-logo-small {
+    /* Estas propiedades aseguran que la imagen escale correctamente dentro del contenedor más grande */
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Mantiene la proporción sin recortar */
+    /* Filtro opcional para que parezca impreso en sepia o negro */
+    filter: grayscale(0.2); 
+}
+
+.bodega-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 15px;
+}
+
+/* Divisor Dorado */
+.divider-dorado {
+    width: 80px;
+    height: 2px;
+    background-color: #d4af37;
+    margin: 0 auto 30px;
+}
+
+.descripcion-texto {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 40px;
+    font-style: italic;
+}
+
+/* Información de contacto en grilla */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 30px;
+    margin-bottom: 20px;
+}
+
+.info-item span {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #a63a43;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.info-item p {
+    font-size: 0.9rem;
+    color: #333;
+    margin: 0;
+}
+
+.web-link {
+    margin-bottom: 40px;
+}
+
+.web-link a {
+    color: #d4af37;
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-bottom: 1px solid transparent;
+    transition: 0.3s;
+}
+
+.web-link a:hover {
+    border-bottom: 1px solid #d4af37;
+}
+
+/* --- CAMBIO: Ajustes de Responsividad para Móviles --- */
+@media (max-width: 600px) {
+    .etiqueta-central {
+        padding: 40px 20px;
+    }
+    
+    /* Reducimos el logo en móviles para que no ocupe demasiado espacio */
+    .logo-container {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 30px;
+    }
+
+    .bodega-title {
+        font-size: 2rem;
+    }
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}

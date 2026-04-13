@@ -1,0 +1,4 @@
+*.dmg
+node_modules/
+.env
+backend/.env

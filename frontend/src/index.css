@@ -1,0 +1,38 @@
+/* Importamos la fuente elegante desde Google Fonts si no la pusiste en el HTML */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+
+:root {
+  --vino-principal: #722f37;
+  --dorado: #b38b59;
+  --fondo-crema: #fdfaf6;
+  --texto-oscuro: #2c2c2c;
+}
+
+body {
+  margin: 0;
+  /* Usamos Inter para lectura general y dejamos Playfair para títulos en App.css */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--fondo-crema);
+  color: var(--texto-oscuro);
+  line-height: 1.6;
+}
+
+/* Reseteo básico para enlaces */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: 0.3s;
+}
+
+/* Estilo para botones globales */
+button {
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Limpieza de la etiqueta code que no usaremos en este proyecto */
+code {
+  display: none;
+}

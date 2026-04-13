@@ -1,0 +1,218 @@
+/* --- Contenedor Principal --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 60px;
+    background-color: #ffffff;
+    border-bottom: 2px solid #a63a43;
+    position: sticky; 
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    height: 110px; /* Altura controlada */
+}
+
+/* --- LOGO (REPARADO: Altura original) --- */
+.logo-img {
+    height: 90px; /* Volvemos a tus 90px */
+    width: auto;
+    transition: transform 0.4s ease;
+    cursor: pointer;
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
+}
+
+/* --- MENÚ CENTRAL --- */
+.navbar-menu {
+    display: flex;
+    gap: 40px;
+}
+
+.navbar-menu a {
+    text-decoration: none;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: color 0.3s ease;
+}
+
+.navbar-menu a:hover, .navbar-menu a.active {
+    color: #a63a43;
+}
+
+/* --- LADO DERECHO --- */
+.navbar-right-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 280px;
+}
+
+/* Fila de Autenticación (Login/Register o Bienvenida) */
+.auth-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+}
+
+/* Unificamos estilo de links y botón de logout */
+.auth-link-btn, .auth-links a {
+    text-decoration: none;
+    color: #b38b59;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: none;
+    border: none;
+    cursor: pointer !important;
+    transition: all 0.3s ease;
+    font-size: 0.75rem;
+}
+
+.auth-link-btn:hover, .auth-links a:hover {
+    color: #000;
+}
+
+.auth-separator {
+    color: #ddd;
+    margin: 0 2px;
+}
+
+.user-welcome {
+    color: #666;
+}
+
+.user-welcome strong {
+    color: #a63a43;
+}
+
+/* --- ACCIONES (BANDERAS Y CARRITO) --- */
+.actions-row {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.language-selector {
+    display: flex;
+    gap: 10px;
+}
+
+.flag-emoji {
+    font-size: 24px;
+    cursor: pointer !important;
+    transition: all 0.3s ease;
+    filter: grayscale(80%);
+    opacity: 0.6;
+}
+
+.flag-emoji:hover, .active-flag {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* --- CARRITO (ESTILO ORIGINAL RECUPERADO) --- */
+.cart-btn-nav {
+    position: relative;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer !important;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.cart-btn-nav:hover {
+    color: #a63a43;
+    transform: scale(1.1);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    background-color: #a63a43;
+    color: white;
+    font-size: 0.65rem;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-weight: bold;
+    border: 2px solid white;
+}
+
+/* --- RESPONSIVO MEJORADO --- */
+@media (max-width: 768px) {
+    .navbar {
+        height: auto; 
+        flex-direction: column; /* Apilamos secciones */
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    /* Reducimos el logo para que no ocupe toda la pantalla */
+    .logo-img {
+        height: 60px; /* Tamaño más cómodo para móvil */
+    }
+
+    /* El menú de navegación se vuelve horizontal y scrolleable si es necesario */
+    .navbar-menu {
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+        margin: 5px 0;
+        flex-wrap: wrap; /* Para que si no caben, bajen a otra línea */
+    }
+
+    .navbar-menu a {
+        font-size: 0.85rem; /* Letra un poco más chica */
+        letter-spacing: 1px;
+    }
+
+    /* La parte derecha (Login/Banderas) */
+    .navbar-right-side {
+        width: 100%;
+        align-items: center; /* Centramos todo en el móvil */
+        min-width: unset; /* Quitamos el mínimo de 280px que empuja todo */
+        gap: 10px;
+    }
+
+    .auth-links {
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Fila de acciones (Banderas y Carrito) */
+    .actions-row {
+        width: 100%;
+        justify-content: center; /* Centramos banderas y carrito */
+        gap: 30px;
+        border-top: 1px solid #eee; /* Una sutil separación */
+        padding-top: 10px;
+    }
+
+    .flag-emoji {
+        font-size: 20px; /* Banderas un pelo más chicas */
+    }
+}
+
+/* Para celulares muy pequeños (iPhone SE, etc.) */
+@media (max-width: 480px) {
+    .logo-img {
+        height: 50px;
+    }
+    .navbar-menu a {
+        font-size: 0.75rem;
+    }
+}

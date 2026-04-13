@@ -1,0 +1,102 @@
+.historia-page-pure-noscroll {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh; 
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: #000; 
+}
+
+.historia-section-full {
+    flex: 1; 
+    width: 100%;
+    margin: 0;
+    padding: 60px 0; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Mantenemos el comportamiento, pero sin la ruta conflictiva */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+.historia-content-pure-noscroll {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px; 
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.historia-title-pure-noscroll {
+    color: #ffffff;
+    font-size: 3rem; 
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.9);
+}
+
+.historia-subtitle-pure-noscroll {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-style: italic;
+    font-weight: 300;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+    margin-bottom: 5px;
+}
+
+.historia-divider-pure-noscroll {
+    width: 80px;
+    height: 3px;
+    background-color: #a63a43; 
+    margin: 20px auto 40px;
+}
+
+.historia-grid-pure-noscroll {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 50px; 
+}
+
+.historia-article-pure-noscroll {
+    background: transparent;
+    text-align: left; 
+}
+
+.historia-block-title-pure-noscroll {
+    color: #ffffff;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.9);
+    border-bottom: 2px solid #a63a43;
+    display: inline-block;
+}
+
+.historia-block-text-pure-noscroll {
+    color: #ffffff;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+}
+
+@media (max-width: 768px) {
+    .historia-section-full {
+        background-attachment: scroll; 
+        padding: 40px 20px;
+    }
+    .historia-grid-pure-noscroll {
+        grid-template-columns: 1fr;
+        gap: 40px; 
+    }
+    .historia-article-pure-noscroll { text-align: center; }
+}

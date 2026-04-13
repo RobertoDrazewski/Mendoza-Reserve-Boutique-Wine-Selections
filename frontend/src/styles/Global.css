@@ -1,0 +1,123 @@
+/* 1. Variables Globales */
+:root {
+  --color-primario: #722f37;    /* Vino Tinto / Malbec */
+  --color-secundario: #b38b59;  /* Dorado / Bronce - Ajustado al que usaste antes */
+  --color-fondo: #fdfaf6;       /* Crema suave */
+  --color-texto: #333333;
+  --color-blanco: #ffffff;
+  --fuente-titulos: 'Playfair Display', serif;
+  --fuente-cuerpo: 'Inter', sans-serif;
+  --max-width: 1200px;
+  --transition: all 0.3s ease;
+}
+
+/* 2. Reset Moderno */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%; /* Necesario para el sticky footer */
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--fuente-cuerpo);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 3. Estructura de Layout (Sticky Footer) */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* --- CAMBIO CRÍTICO AQUÍ --- */
+.main-content {
+  flex: 1; /* Esto empuja el footer hacia abajo */
+  width: 100%;
+  /* Eliminamos el max-width de aquí para que el Home sea full-width */
+}
+
+/* 4. Navbar (Consolidado con tus peticiones anteriores) */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-blanco);
+  padding: 10px 60px;
+  border-bottom: 2px solid var(--color-primario);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 60px; /* Espaciado amplio en el centro */
+}
+
+/* 5. Footer (Corregido) */
+.footer {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  padding: 40px 20px;
+  text-align: center;
+  width: 100%;
+  margin-top: auto; /* Refuerza que se quede abajo */
+}
+
+/* 6. Imágenes e Imágenes de Fondo */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Clase para que el Home ocupe todo el ancho */
+.hero-full {
+  width: 100%;
+  min-height: calc(100vh - 80px); /* Pantalla completa menos navbar */
+  margin: 0;
+  padding: 0;
+}
+
+/* Clase para páginas con texto centrado (Historia, etc.) */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+/* 7. Tipografía */
+h1, h2, h3 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-primario);
+}
+
+.text-center { text-align: center; }
+
+/* 8. Botones */
+.btn-primary {
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
+  padding: 14px 30px;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: var(--transition);
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background-color: #5a252c;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}

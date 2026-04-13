@@ -1,0 +1,132 @@
+/* src/styles/Login.css */
+
+.login-page {
+  width: 100%;
+  padding: 150px 20px 100px;
+  min-height: 100vh;
+  background-color: #fdfaf6; /* Fondo crema muy sutil para resaltar la card blanca */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  background: #ffffff;
+  /* --- CAMBIO: Más compacto, igual que Contacto --- */
+  max-width: 420px; 
+  width: 100%;
+  padding: 50px 40px;
+  /* --- CAMBIO: Bordes muy redondeados --- */
+  border-radius: 25px;
+  border: 1px solid rgba(212, 175, 55, 0.3); /* Dorado suave */
+  text-align: center;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
+}
+
+.login-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 200;
+  font-size: 2.8rem;
+  color: #d4af37;
+  margin-bottom: 5px;
+}
+
+.login-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #a63a43;
+  margin-bottom: 35px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espaciado entre campos más ajustado */
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 20px;
+  border: 1px solid #e0dcd0;
+  background-color: #fdfaf6;
+  /* --- CAMBIO: Inputs redondeados --- */
+  border-radius: 15px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #a63a43;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(166, 58, 67, 0.05);
+}
+
+.btn-winery-auth {
+  padding: 16px;
+  background-color: #a63a43;
+  color: #ffffff;
+  border: none;
+  /* --- CAMBIO: Botón redondeado tipo cápsula --- */
+  border-radius: 50px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  margin-top: 15px;
+}
+
+.btn-winery-auth:hover {
+  background-color: #d4af37;
+  color: #000000;
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+}
+
+.login-footer {
+  margin-top: 30px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #888;
+  letter-spacing: 1px;
+}
+
+.login-footer a {
+  color: #a63a43;
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-left: 5px;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s;
+}
+
+.login-footer a:hover {
+  color: #d4af37;
+  border-bottom: 1px solid #d4af37;
+}
+
+/* --- Ajustes Móvil --- */
+@media (max-width: 600px) {
+  .login-card {
+    max-width: 90%;
+    padding: 40px 25px;
+    border-radius: 20px;
+  }
+  
+  .login-title {
+    font-size: 2.2rem;
+  }
+}

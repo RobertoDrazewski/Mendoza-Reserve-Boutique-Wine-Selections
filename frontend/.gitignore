@@ -1,0 +1,9 @@
+node_modules/
+.env
+build/
+dist/
+*.dmg
+*.zip
+*.pkg
+node_modules/
+.env

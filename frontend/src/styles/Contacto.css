@@ -1,0 +1,173 @@
+/* src/styles/Contacto.css */
+
+.contacto-page {
+  width: 100%;
+  background-color: #fdfaf6; /* Un tono crema muy sutil de fondo */
+  padding: 150px 20px 100px; 
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contacto-container {
+  /* --- CAMBIO: Más chico para que se vea más elegante --- */
+  max-width: 500px; 
+  width: 100%;
+  text-align: center;
+}
+
+.contacto-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 200;
+  font-size: 3rem; /* Un poco más pequeño para armonizar */
+  color: #d4af37;
+  margin-bottom: 5px;
+}
+
+.contacto-subtitle {
+  font-family: 'Inter', sans-serif;
+  color: #a63a43;
+  font-size: 0.8rem;
+  margin-bottom: 35px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.contacto-form {
+  background: #ffffff;
+  padding: 40px;
+  /* --- CAMBIO: Bordes muy redondeados --- */
+  border-radius: 25px; 
+  border: 1px solid rgba(212, 175, 55, 0.3); /* Dorado más suave */
+  text-align: left;
+  /* Sombra más suave para resaltar la forma redonda */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s ease;
+}
+
+.contacto-form:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #a63a43;
+  margin-bottom: 8px;
+  margin-left: 10px; /* Alineado con la redondez del input */
+  font-weight: 600;
+}
+
+.form-group input, 
+.form-group textarea {
+  width: 100%;
+  padding: 14px 20px;
+  border: 1px solid #e0dcd0;
+  background-color: #fdfaf6;
+  /* --- CAMBIO: Inputs redondeados --- */
+  border-radius: 15px; 
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+  outline: none;
+  border-color: #a63a43;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(166, 58, 67, 0.05); /* Halo sutil al enfocar */
+}
+
+.btn-winery-contact {
+  width: 100%;
+  padding: 16px;
+  background-color: #a63a43;
+  color: white;
+  border: none;
+  /* --- CAMBIO: Botón redondeado --- */
+  border-radius: 50px; 
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  margin-top: 15px;
+}
+
+.btn-winery-contact:hover {
+  background-color: #d4af37;
+  color: #000;
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+}
+
+/* --- RESPONSIVO CONTACTO MEJORADO --- */
+
+@media (max-width: 768px) {
+    .contacto-page {
+        /* Ajustamos el padding superior para el navbar móvil */
+        padding: 120px 15px 60px; 
+        min-height: auto; /* Dejamos que crezca según el contenido */
+    }
+
+    .contacto-container {
+        max-width: 100%; /* Aprovecha todo el ancho disponible */
+    }
+
+    .contacto-title {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+
+    .contacto-subtitle {
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        margin-bottom: 25px;
+    }
+
+    .contacto-form {
+        padding: 30px 20px;
+        border-radius: 20px; /* Un poco menos redondeado para no perder espacio interno */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-group label {
+        font-size: 0.65rem;
+        margin-left: 5px;
+    }
+
+    .form-group input, 
+    .form-group textarea {
+        padding: 12px 15px; /* Inputs ligeramente más compactos */
+        font-size: 16px; /* ¡IMPORTANTE! Evita que iOS haga zoom automático al enfocar */
+    }
+}
+
+/* Optimización para iPhone SE o pantallas de 4 pulgadas */
+@media (max-width: 400px) {
+    .contacto-title {
+        font-size: 1.8rem;
+    }
+    
+    .contacto-form {
+        padding: 25px 15px;
+    }
+
+    .btn-winery-contact {
+        padding: 14px;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+    }
+}

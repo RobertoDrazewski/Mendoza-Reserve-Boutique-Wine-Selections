@@ -1,0 +1,176 @@
+/* src/styles/Register.css */
+
+.register-page {
+  width: 100%;
+  /* 1. Usamos min-height para asegurar que cubra la pantalla */
+  min-height: 100vh; 
+  background-color: #fdfaf6;
+  
+  /* 2. EL TRUCO: Añadimos un padding superior igual al alto del Navbar (110px) 
+     Esto empuja TODO el contenido hacia abajo para que no quede tapado */
+  padding-top: 110px; 
+  
+  /* 3. Centrado absoluto en el espacio restante */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* 4. Padding inferior igual al superior para simetría total */
+  padding-bottom: 110px; 
+  box-sizing: border-box;
+}
+
+.register-card {
+  background: #ffffff;
+  max-width: 420px; 
+  width: 90%;
+  /* Reducimos un poco el padding interno para que la tarjeta sea más compacta */
+  padding: 35px 40px; 
+  border-radius: 25px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  text-align: center;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  
+  /* Evita que la tarjeta sea más alta que la pantalla en laptops pequeñas */
+  max-height: calc(100vh - 150px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* --- Títulos y subtítulos --- */
+.register-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 200;
+  font-size: 2.4rem;
+  color: #d4af37;
+  margin-bottom: 2px;
+}
+
+.register-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: #a63a43;
+  margin-bottom: 20px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* --- Formulario compacto --- */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 20px;
+  border: 1px solid #e0dcd0;
+  background-color: #fdfaf6;
+  border-radius: 15px !important; /* Bordes suaves */
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.btn-winery-auth {
+  padding: 14px;
+  background-color: #a63a43;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px !important;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.register-footer {
+  margin-top: 20px;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* --- Ajuste para que Nombre y Apellido no se amontonen --- */
+.name-row {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .register-page {
+    /* En móvil permitimos que crezca si es necesario */
+    height: auto;
+    padding-top: 120px; 
+  }
+  .name-row {
+    flex-direction: column;
+  }
+}
+/* --- RESPONSIVO REGISTER MEJORADO --- */
+
+@media (max-width: 768px) {
+    .register-page {
+        /* Ajustamos el padding para el Navbar móvil que es más alto */
+        padding-top: 130px; 
+        padding-bottom: 80px;
+        align-items: flex-start; /* Evita que la tarjeta flote en el aire si es larga */
+        min-height: 100vh;
+        height: auto;
+    }
+
+    .register-card {
+        /* ELIMINAMOS el max-height para que el usuario pueda hacer scroll hacia abajo */
+        max-height: none; 
+        padding: 30px 20px;
+        border-radius: 20px;
+        width: 95%; /* Aprovechamos más el ancho del celular */
+    }
+
+    .register-title {
+        font-size: 2rem;
+    }
+
+    .register-subtitle {
+        font-size: 0.65rem;
+        letter-spacing: 2px;
+        margin-bottom: 25px;
+    }
+
+    /* Nombre y Apellido uno debajo del otro */
+    .name-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .input-group input {
+        /* Prevenimos el zoom automático de iOS */
+        font-size: 16px; 
+        padding: 14px 18px;
+    }
+
+    .btn-winery-auth {
+        padding: 16px;
+        font-size: 0.85rem;
+        margin-top: 15px;
+    }
+
+    .register-footer {
+        font-size: 0.8rem;
+        margin-top: 25px;
+    }
+}
+
+/* Optimización para móviles muy pequeños */
+@media (max-width: 400px) {
+    .register-page {
+        padding-top: 110px;
+    }
+    
+    .register-card {
+        padding: 25px 15px;
+    }
+}

@@ -1,0 +1,124 @@
+/* --- Contenedor Principal --- */
+.vinos-page {
+    padding: 150px 20px 120px 20px; 
+    max-width: 1200px; 
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.vinos-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    text-align: center;
+    color: #a63a43;
+    font-size: 3rem;
+    margin-bottom: 50px;
+}
+
+/* --- Grilla de 3 Columnas --- */
+.vinos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px; 
+    width: 100%;
+}
+
+/* --- Tarjeta Rectangular Elegante --- */
+.vino-card {
+    background: #ffffff;
+    border: 1px solid #d4af37;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.vino-card:hover {
+    transform: translateY(-10px);
+    border-color: #a63a43;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+/* --- Contenedor de Imagen (EL TRUCO PARA QUE NO SEAN GIGANTES) --- */
+.vino-image-container {
+    width: 100%;
+    height: 300px; /* Altura fija para la caja de la imagen */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    overflow: hidden;
+}
+
+.vino-image-container img {
+    max-width: 100%;
+    max-height: 100%; /* Evita que la imagen se estire */
+    object-fit: contain; /* Mantiene la proporción de la botella */
+}
+
+/* --- Texto y Precio --- */
+.vino-card h3 {
+    font-family: 'Playfair Display', serif;
+    color: #a63a43;
+    font-size: 1.3rem;
+    margin: 20px 15px 10px;
+    text-align: center;
+}
+
+.vino-price {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* --- Botón de Acción --- */
+.btn-add-cart {
+    background-color: #a63a43;
+    color: #ffffff;
+    border: none;
+    padding: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%; /* Ocupa todo el ancho inferior de la card */
+    margin-top: auto; /* Empuja el botón al final de la tarjeta */
+}
+
+.btn-add-cart:hover {
+    background-color: #d4af37;
+    color: #000;
+}
+
+/* --- Estado cuando NO está logueado --- */
+.btn-add-cart.not-logged {
+    background-color: #e0dcd0;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* --- Responsividad --- */
+@media (max-width: 992px) {
+    .vinos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    .vinos-grid {
+        grid-template-columns: 1fr;
+    }
+    .vinos-title {
+        font-size: 2.2rem;
+    }
+}
