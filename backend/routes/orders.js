@@ -1,23 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
-const { verificarToken } = require('../middleware/auth');
+const { verificarToken, esAdmin } = require('../middleware/auth');
 
 /**
- * --- RUTAS DE ÓRDENES (PROTEGIDAS) ---
- * Todas estas rutas requieren que el usuario envíe su JWT en el Header
+ * --- RUTAS PÚBLICAS (sin login) ---
+ * El link de aceptación de la bodega y el seguimiento del comprador no requieren cuenta.
  */
+router.get('/track/:cartGroupId', orderController.getOrderGroupPublic);
+router.get('/accept/:token', orderController.getOrderByAcceptToken);
+router.post('/accept/:token', orderController.respondToOrder);
 
-// 1. Crear una nueva orden (POST /api/orders)
-// Se ejecuta cuando el usuario hace clic en "Finalizar Compra"
+/**
+ * --- RUTAS ADMIN ---
+ * Antes de '/:id' para que no choquen con el parámetro.
+ */
+router.get('/admin', [verificarToken, esAdmin], orderController.getAllOrdersAdmin);
+router.put('/admin/:id', [verificarToken, esAdmin], orderController.updateOrderAdmin);
+
+/**
+ * --- RUTAS DE COMPRADOR (requieren login) ---
+ */
 router.post('/', verificarToken, orderController.createOrder);
-
-// 2. Obtener historial (GET /api/orders/mis-ordenes)
-// Es importante que esta ruta esté ANTES de la ruta con parámetro :id
 router.get('/mis-ordenes', verificarToken, orderController.getUserOrders);
-
-// 3. Detalles de una orden (GET /api/orders/:id)
-// Útil para ver qué vinos específicos tenía una compra vieja
 router.get('/:id', verificarToken, orderController.getOrderById);
 
 module.exports = router;

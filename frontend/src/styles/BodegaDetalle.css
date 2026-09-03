@@ -1,12 +1,143 @@
 /* Contenedor de toda la página para centrar la etiqueta */
 .detalle-page-wrapper {
     min-height: 100vh;
-    padding: 150px 20px 100px;
+    padding: 150px 20px 120px;
     background-color: #f4f1ea; /* Color papel hueso */
     display: flex;
     justify-content: center;
-    align-items: center;
 }
+
+.detalle-page-inner {
+    max-width: 900px;
+    width: 100%;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #a63a43;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.back-link:hover { color: #722f37; }
+
+.bodega-logo-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #a63a43 0%, #722f37 100%);
+    color: rgba(255,255,255,0.9);
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+}
+
+.catalogo-bodega {
+    margin-top: 50px;
+}
+
+.catalogo-bodega h2 {
+    font-family: 'Playfair Display', serif;
+    text-align: center;
+    color: #a63a43;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+}
+
+.no-vinos {
+    text-align: center;
+    color: #888;
+}
+
+.vinos-grid-mini {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 25px;
+}
+
+.vino-card-mini {
+    background: #fff;
+    border: 1px solid #e5decb;
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s;
+}
+
+.vino-card-mini:hover {
+    border-color: #d4af37;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
+.vino-image-mini {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f9f9f9;
+    padding: 15px;
+}
+
+.vino-image-mini img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.vino-info-mini {
+    padding: 16px;
+}
+
+.vino-info-mini h4 {
+    font-family: 'Playfair Display', serif;
+    color: #1a1a1a;
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+}
+
+.vino-meta {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.vino-formato {
+    font-size: 0.75rem;
+    color: #b38b59;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.vino-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.vino-price-mini {
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.btn-add-mini {
+    background: #a63a43;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.btn-add-mini:hover { background: #d4af37; color: #000; }
 
 /* La Etiqueta Grande Central */
 .etiqueta-central {

@@ -1,0 +1,208 @@
+.admin-panel {
+    padding: 150px 25px 120px;
+    max-width: 1300px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+.admin-panel h1 {
+    font-family: 'Playfair Display', serif;
+    color: #a63a43;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.admin-denied {
+    padding: 200px 20px;
+    text-align: center;
+}
+
+.admin-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.admin-tabs button {
+    background: #fff;
+    border: 1px solid #d4af37;
+    color: #a63a43;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.admin-tabs button:hover, .admin-tabs button.active {
+    background: #a63a43;
+    border-color: #a63a43;
+    color: #fff;
+}
+
+.admin-tab-content {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 25px;
+}
+
+.admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-toolbar input, .admin-toolbar select {
+    padding: 9px 12px;
+    border: 1px solid #ddd;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+}
+
+.admin-count {
+    margin-left: auto;
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.admin-msg {
+    padding: 10px 14px;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+}
+
+.admin-msg.ok { background: #e6f4ea; color: #2a7a3f; }
+.admin-msg.error { background: #fbeceb; color: #a63a43; }
+
+.admin-table-wrap {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid #d4af37;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    color: #a63a43;
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+}
+
+.admin-table select {
+    padding: 5px 8px;
+    border: 1px solid #ddd;
+    font-size: 0.8rem;
+}
+
+.admin-small { font-size: 0.78rem; color: #777; }
+
+.btn-link-edit {
+    background: none;
+    border: none;
+    color: #a63a43;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0;
+}
+
+.btn-link-edit.danger { color: #999; }
+.btn-link-edit:hover { color: #722f37; }
+
+.btn-primary-sm {
+    background: #a63a43;
+    color: #fff;
+    border: none;
+    padding: 9px 16px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary-sm:hover { background: #722f37; }
+.btn-primary-sm:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.admin-edit-row td { background: #fdfaf6; }
+
+.admin-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.admin-edit-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.admin-edit-grid label.full {
+    grid-column: 1 / -1;
+}
+
+.admin-edit-grid input, .admin-edit-grid textarea, .admin-edit-grid select {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+}
+
+.admin-vino-form {
+    background: #fdfaf6;
+    border: 1px solid #eee;
+    padding: 18px;
+    margin-bottom: 20px;
+}
+
+.admin-vino-form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+}
+
+.admin-csv-import {
+    background: #fdfaf6;
+    border: 1px solid #eee;
+    padding: 18px;
+    margin-bottom: 20px;
+}
+
+.admin-csv-import p {
+    font-size: 0.8rem;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.admin-csv-import textarea {
+    width: 100%;
+    font-family: monospace;
+    font-size: 0.78rem;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+}

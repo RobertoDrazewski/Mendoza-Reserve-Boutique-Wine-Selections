@@ -1,0 +1,67 @@
+.wo-card { max-width: 100%; }
+
+.wo-comision {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.wo-buyer {
+    background: #fdfaf6;
+    border: 1px solid #eee;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+}
+
+.wo-buyer h4 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b38b59;
+    margin-bottom: 6px;
+}
+
+.wo-buyer p { font-size: 0.9rem; color: #444; margin: 2px 0; }
+
+.wo-actions textarea {
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 15px;
+    resize: vertical;
+}
+
+.wo-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.wo-btn-confirm, .wo-btn-reject {
+    flex: 1;
+    min-width: 180px;
+    padding: 14px;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.wo-btn-confirm { background: #2a7a3f; color: #fff; }
+.wo-btn-confirm:hover { background: #1e5c2e; }
+
+.wo-btn-reject { background: #fff; color: #a63a43; border: 1px solid #a63a43; }
+.wo-btn-reject:hover { background: #fbeceb; }
+
+.wo-btn-confirm:disabled, .wo-btn-reject:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.wo-ya-respondido, .wo-resultado {
+    text-align: center;
+    padding: 15px;
+    background: #fdf3e0;
+    color: #a67c1c;
+    font-weight: 600;
+}

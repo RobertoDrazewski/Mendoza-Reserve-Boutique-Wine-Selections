@@ -1,117 +1,127 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '../context/LanguageContext'; 
+import { useLanguage } from '../context/LanguageContext';
 import '../styles/BodegasLista.css';
 
 const BodegasLista = () => {
-    const [allBodegas, setAllBodegas] = useState([]); // Todas las de la DB
-    const [displayBodegas, setDisplayBodegas] = useState([]); // Las que se ven
+    const [bodegas, setBodegas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [zonaFiltro, setZonaFiltro] = useState('');
     const { lang } = useLanguage();
-    
-    // Configuración de Scroll Infinito
-    const [page, setPage] = useState(1);
-    const itemsPerPage = 4; // Cuántas cargar por vez
-    const observer = useRef();
 
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
 
     const t = {
-        es: { title: "Nuestras Bodegas", loading: "Cargando selección...", error: "Error de conexión.", viewMore: "Conocer Bodega", phone: "Tel:", address: "Dir:" },
-        en: { title: "Our Wineries", loading: "Loading selection...", error: "Connection error.", viewMore: "View Winery", phone: "Phone:", address: "Addr:" }
+        es: {
+            title: 'Nuestras Bodegas',
+            subtitle: 'Productores boutique de Mendoza, seleccionados para exportar directo al Reino Unido.',
+            loading: 'Cargando selección...',
+            error: 'Error de conexión.',
+            viewMore: 'Conocer Bodega',
+            phone: 'Tel:',
+            address: 'Dir:',
+            allZones: 'Todas las zonas',
+            empty: 'Todavía no hay bodegas activas para mostrar. Estamos incorporando nuevos productores.'
+        },
+        en: {
+            title: 'Our Wineries',
+            subtitle: 'Boutique Mendoza producers, selected to export directly to the UK.',
+            loading: 'Loading selection...',
+            error: 'Connection error.',
+            viewMore: 'View Winery',
+            phone: 'Phone:',
+            address: 'Addr:',
+            allZones: 'All zones',
+            empty: 'No active wineries to show yet. We are onboarding new producers.'
+        }
     };
     const currentT = t[lang] || t['es'];
 
-    // 1. Carga inicial de datos desde la API
     useEffect(() => {
         const fetchBodegas = async () => {
             try {
                 setLoading(true);
                 const res = await axios.get(`${API_URL}/bodegas`);
-                const data = res.data?.bodegas || (Array.isArray(res.data) ? res.data : []);
-                setAllBodegas(data);
-                // Mostrar los primeros X elementos
-                setDisplayBodegas(data.slice(0, itemsPerPage));
+                const data = Array.isArray(res.data) ? res.data : [];
+                setBodegas(data);
             } catch (err) {
-                console.error("❌ Error:", err);
+                console.error('Error al cargar bodegas:', err);
                 setError(currentT.error);
             } finally {
                 setLoading(false);
             }
         };
         fetchBodegas();
-    }, [API_URL, currentT.error]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [API_URL]);
 
-    // 2. Función para cargar más elementos al hacer scroll
-    const lastElementRef = useCallback(node => {
-        if (loading) return;
-        if (observer.current) observer.current.disconnect();
+    const zonas = useMemo(() => {
+        const set = new Set(bodegas.map((b) => b.zona).filter(Boolean));
+        return Array.from(set).sort();
+    }, [bodegas]);
 
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && displayBodegas.length < allBodegas.length) {
-                setPage(prevPage => prevPage + 1);
-            }
-        });
+    const visibles = zonaFiltro ? bodegas.filter((b) => b.zona === zonaFiltro) : bodegas;
 
-        if (node) observer.current.observe(node);
-    }, [loading, displayBodegas.length, allBodegas.length]);
-
-    // 3. Efecto para actualizar la lista visible cuando cambia la página
-    useEffect(() => {
-        if (page > 1) {
-            const nextBatch = allBodegas.slice(0, page * itemsPerPage);
-            setDisplayBodegas(nextBatch);
-        }
-    }, [page, allBodegas]);
-
-    if (loading && allBodegas.length === 0) return <div className="status-message">{currentT.loading}</div>;
+    if (loading) return <div className="status-message">{currentT.loading}</div>;
     if (error) return <div className="status-message error">{error}</div>;
 
     return (
         <div className="bodegas-container">
             <h1>{currentT.title}</h1>
-            <div className="bodegas-grid">
-                {displayBodegas.map((item, index) => {
-                    // Si es el último elemento de la lista actual, le ponemos la referencia
-                    const isLastElement = displayBodegas.length === index + 1;
-                    
-                    return (
-                        <div 
-                            key={item.id} 
-                            className="bodega-card" 
-                            ref={isLastElement ? lastElementRef : null}
-                        >
+            <p className="bodegas-subtitle">{currentT.subtitle}</p>
+
+            {zonas.length > 1 && (
+                <div className="zona-filtro">
+                    <button className={!zonaFiltro ? 'active' : ''} onClick={() => setZonaFiltro('')}>
+                        {currentT.allZones}
+                    </button>
+                    {zonas.map((z) => (
+                        <button key={z} className={zonaFiltro === z ? 'active' : ''} onClick={() => setZonaFiltro(z)}>
+                            {z}
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            {visibles.length === 0 ? (
+                <p className="bodegas-empty">{currentT.empty}</p>
+            ) : (
+                <div className="bodegas-grid">
+                    {visibles.map((item) => (
+                        <div key={item.id} className="bodega-card">
                             <div className="bodega-image-wrapper">
-                                <img 
-                                    src={item.imagen ? `/images/${item.imagen}` : '/images/default-bodega.jpg'} 
-                                    alt={item.bodega}
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/images/logo.jpg"; 
-                                    }}
-                                />
+                                {item.imagen ? (
+                                    <img
+                                        src={`/images/${item.imagen}`}
+                                        alt={item.nombre}
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/images/logo.jpg';
+                                        }}
+                                    />
+                                ) : (
+                                    <div className="bodega-placeholder">
+                                        <span>{item.nombre?.charAt(0) || 'M'}</span>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="card-content">
-                                <h3 className="bodega-name">{item.bodega || "Sin Nombre"}</h3>
+                                <h3 className="bodega-name">{item.nombre}</h3>
+                                {item.zona && <p className="bodega-zona">{item.zona}{item.subzona ? ` · ${item.subzona}` : ''}</p>}
                                 <div className="contact-details">
-                                    <p><strong>{currentT.phone}</strong> {item.phone || 'N/A'}</p>
-                                    <p><strong>{currentT.address}</strong> {item.wineryAddress || 'Mendoza'}</p>
+                                    {item.telefono && <p><strong>{currentT.phone}</strong> {item.telefono}</p>}
+                                    {item.direccion && <p><strong>{currentT.address}</strong> {item.direccion}</p>}
                                 </div>
-                                <Link to={`/bodega/${item.id}`} className="btn-conocer">
+                                <Link to={`/bodega/${item.slug || item.id}`} className="btn-conocer">
                                     {currentT.viewMore}
                                 </Link>
                             </div>
                         </div>
-                    );
-                })}
-            </div>
-            
-            {/* Pequeño indicador de carga al final si hay más por cargar */}
-            {displayBodegas.length < allBodegas.length && (
-                <div className="loading-more">...</div>
+                    ))}
+                </div>
             )}
         </div>
     );

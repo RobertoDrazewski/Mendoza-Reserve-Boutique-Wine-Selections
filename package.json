@@ -1,0 +1,10 @@
+{
+  "name": "mendoza-reserve",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo raíz — sólo existe para que Railway (Nixpacks) detecte un proyecto Node y sepa cómo instalar y armar los dos paquetes (backend y frontend) con un único build/start. El código real vive en backend/ y frontend/.",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm start --prefix backend"
+  }
+}

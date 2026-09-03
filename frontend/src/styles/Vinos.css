@@ -15,7 +15,77 @@
     text-align: center;
     color: #a63a43;
     font-size: 3rem;
-    margin-bottom: 50px;
+    margin-bottom: 10px;
+}
+
+.vinos-subtitle {
+    text-align: center;
+    color: #777;
+    max-width: 620px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+}
+
+.zona-filtro {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 45px;
+}
+
+.zona-filtro button {
+    background: #fff;
+    border: 1px solid #d4af37;
+    color: #a63a43;
+    padding: 8px 18px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.zona-filtro button:hover,
+.zona-filtro button.active {
+    background: #a63a43;
+    border-color: #a63a43;
+    color: #fff;
+}
+
+.vino-bodega-link {
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b38b59;
+    margin: 15px 15px 0;
+}
+
+.vino-bodega-link:hover { color: #a63a43; }
+
+.vino-meta {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0 15px;
+}
+
+.vino-formato-tag {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #b38b59;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 4px 15px 10px;
+}
+
+.no-vinos {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #888;
+    padding: 40px 0;
 }
 
 /* --- Grilla de 3 Columnas --- */

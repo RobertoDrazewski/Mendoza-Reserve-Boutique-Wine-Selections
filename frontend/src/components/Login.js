@@ -68,9 +68,9 @@ const Login = () => {
 
         // Redirección inteligente
         if (data.user.rol === 'admin') {
-          navigate('/admin-dashboard');
+          navigate('/admin');
         } else {
-          navigate('/vinos'); 
+          navigate('/vinos');
         }
       } else {
         setError(data.msg || currentT.error);

@@ -1,0 +1,167 @@
+.tracking-container {
+    padding: 150px 20px 120px;
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 80vh;
+}
+
+.tracking-container h1 {
+    font-family: 'Playfair Display', serif;
+    text-align: center;
+    color: #a63a43;
+    font-size: 2.6rem;
+    margin-bottom: 10px;
+}
+
+.tracking-subtitle {
+    text-align: center;
+    color: #777;
+    margin-bottom: 35px;
+}
+
+.tracking-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+    background: #fff;
+    border: 1px solid #d4af37;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.tracking-form label {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 220px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #555;
+    gap: 6px;
+}
+
+.tracking-form input {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    background: #fdfaf6;
+    font-family: 'Inter', sans-serif;
+}
+
+.tracking-form input:focus {
+    outline: none;
+    border-color: #a63a43;
+}
+
+.tracking-form button {
+    background: #a63a43;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.tracking-form button:hover { background: #722f37; }
+.tracking-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.tracking-error {
+    text-align: center;
+    color: #a63a43;
+    background: #fbeceb;
+    padding: 12px;
+    margin-bottom: 20px;
+}
+
+.tracking-results {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tracking-order-card {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 22px;
+}
+
+.tracking-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tracking-order-header h3 {
+    font-family: 'Playfair Display', serif;
+    color: #1a1a1a;
+    font-size: 1.2rem;
+}
+
+.estado-badge {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: #eee;
+    color: #555;
+    white-space: nowrap;
+}
+
+.estado-confirmada, .estado-enviada, .estado-en_transito, .estado-entregada { background: #e6f4ea; color: #2a7a3f; }
+.estado-cancelada { background: #fbeceb; color: #a63a43; }
+.estado-pendiente_bodega { background: #fdf3e0; color: #a67c1c; }
+
+.tracking-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.8;
+}
+
+.tracking-subtotal {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.tracking-shipment {
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+}
+
+.tracking-shipment h4 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b38b59;
+    margin-bottom: 8px;
+}
+
+.tracking-shipment p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 2px 0;
+}
+
+.tracking-shipment a {
+    color: #a63a43;
+    word-break: break-all;
+}
+
+.no-shipment {
+    color: #999;
+    font-style: italic;
+}
+
+@media (max-width: 600px) {
+    .tracking-form { flex-direction: column; align-items: stretch; }
+}

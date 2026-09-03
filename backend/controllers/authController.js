@@ -2,12 +2,15 @@ const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = "MendozaReserve_Secret_Key_2026"; 
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // --- REGISTRO REPARADO ---
 exports.register = async (req, res) => {
     // 1. Desestructuramos los datos
-    const { nombre, apellido, email, password, rol } = req.body;
+    // SEGURIDAD: 'rol' NO se toma del body — este endpoint es público, así que aceptar
+    // un rol enviado por el cliente permitiría que cualquiera se auto-registre como admin.
+    // Todo alta pública entra como 'cliente'; el único admin se promueve a mano en la DB.
+    const { nombre, apellido, email, password } = req.body;
 
     try {
         // 2. Verificar si el email ya existe
@@ -19,7 +22,7 @@ exports.register = async (req, res) => {
         // 3. Encriptar la contraseña
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const usuarioRol = rol || 'cliente';
+        const usuarioRol = 'cliente';
 
         // 4. Insertar usuario
         // IMPORTANTE: Asegúrate de que tu tabla en MySQL tenga la columna 'apellido'

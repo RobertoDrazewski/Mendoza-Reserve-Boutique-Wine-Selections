@@ -1,5 +1,12 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = "MendozaReserve_Secret_Key_2026"; 
+
+// El secreto SIEMPRE sale de la variable de entorno JWT_SECRET (ver backend/.env.example).
+// No hay fallback hardcodeado: si falta la env var, el server no debe firmar/verificar tokens
+// con un valor conocido públicamente en el repo.
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error('❌ Falta la variable de entorno JWT_SECRET. Definila antes de arrancar el servidor.');
+}
 
 // 1. Verificar si el usuario está autenticado
 exports.verificarToken = (req, res, next) => {

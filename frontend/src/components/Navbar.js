@@ -12,15 +12,15 @@ const Navbar = () => {
     const { getCartCount } = useCart(); 
 
     const t = {
-        es: { 
-            home: "Inicio", bodegas: "Bodegas", vinos: "Vinos", historia: "Historia", 
+        es: {
+            home: "Inicio", bodegas: "Bodegas", vinos: "Vinos", historia: "Historia",
             contacto: "Contacto", login: "Ingresar", registro: "Registro",
-            logout: "Salir", welcome: "Hola"
+            logout: "Salir", welcome: "Hola", seguimiento: "Mi pedido", admin: "Admin"
         },
-        en: { 
-            home: "Home", bodegas: "Wineries", vinos: "Wines", historia: "History", 
+        en: {
+            home: "Home", bodegas: "Wineries", vinos: "Wines", historia: "History",
             contacto: "Contact", login: "Login", registro: "Register",
-            logout: "Logout", welcome: "Hi"
+            logout: "Logout", welcome: "Hi", seguimiento: "Track order", admin: "Admin"
         }
     };
     
@@ -45,6 +45,10 @@ const Navbar = () => {
                 <NavLink to="/vinos" className={({ isActive }) => isActive ? "active" : ""}>{currentT.vinos}</NavLink>
                 <NavLink to="/historia" className={({ isActive }) => isActive ? "active" : ""}>{currentT.historia}</NavLink>
                 <NavLink to="/contacto" className={({ isActive }) => isActive ? "active" : ""}>{currentT.contacto}</NavLink>
+                <NavLink to="/seguimiento" className={({ isActive }) => isActive ? "active" : ""}>{currentT.seguimiento}</NavLink>
+                {user?.rol === 'admin' && (
+                    <NavLink to="/admin" className={({ isActive }) => isActive ? "active" : ""}>{currentT.admin}</NavLink>
+                )}
             </div>
 
             <div className="navbar-right-side">
