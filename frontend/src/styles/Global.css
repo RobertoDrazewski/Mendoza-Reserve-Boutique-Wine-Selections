@@ -1,13 +1,21 @@
+/* 0. Tipografía (Google Fonts) — antes se referenciaban sin importarlas nunca */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap');
+
 /* 1. Variables Globales */
 :root {
-  --color-primario: #722f37;    /* Vino Tinto / Malbec */
-  --color-secundario: #b38b59;  /* Dorado / Bronce - Ajustado al que usaste antes */
-  --color-fondo: #fdfaf6;       /* Crema suave */
+  --color-primario: #722f37;     /* Vino Tinto / Malbec (profundo) */
+  --color-malbec-bright: #a63a43; /* Malbec brillante — links, bordes, acentos */
+  --color-malbec-deep: #3d1219;   /* Malbec casi negro — fondo del footer */
+  --color-secundario: #b38b59;   /* Dorado / Bronce */
+  --color-gold: #c9a15a;         /* Dorado refinado — sobre fondos oscuros */
+  --color-gold-light: #e4c98a;   /* Dorado claro — texto secundario sobre malbec */
+  --color-fondo: #fdfaf6;        /* Crema suave */
   --color-texto: #333333;
   --color-blanco: #ffffff;
-  --fuente-titulos: 'Playfair Display', serif;
-  --fuente-cuerpo: 'Inter', sans-serif;
+  --fuente-titulos: 'Playfair Display', 'Georgia', serif;
+  --fuente-cuerpo: 'Inter', -apple-system, sans-serif;
   --max-width: 1200px;
+  --max-width-wide: 1320px;
   --transition: all 0.3s ease;
 }
 

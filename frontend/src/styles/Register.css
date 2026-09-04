@@ -6,17 +6,16 @@
   min-height: 100vh; 
   background-color: #fdfaf6;
   
-  /* 2. EL TRUCO: Añadimos un padding superior igual al alto del Navbar (110px) 
-     Esto empuja TODO el contenido hacia abajo para que no quede tapado */
-  padding-top: 110px; 
-  
+  /* 2. Padding superior igual al alto del Navbar (100px) para que no quede tapado */
+  padding-top: 130px;
+
   /* 3. Centrado absoluto en el espacio restante */
   display: flex;
   justify-content: center;
   align-items: center;
-  
-  /* 4. Padding inferior igual al superior para simetría total */
-  padding-bottom: 110px; 
+
+  /* 4. El footer ya no es "fixed" — con un poco de aire alcanza */
+  padding-bottom: 60px;
   box-sizing: border-box;
 }
 

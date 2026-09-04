@@ -64,8 +64,14 @@
 .historia-grid-pure-noscroll {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr; 
-    gap: 50px; 
+    grid-template-columns: repeat(3, 1fr);
+    gap: 44px;
+}
+
+@media (max-width: 1000px) {
+    .historia-grid-pure-noscroll {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .historia-article-pure-noscroll {

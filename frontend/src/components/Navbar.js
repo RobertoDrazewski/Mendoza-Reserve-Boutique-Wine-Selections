@@ -18,7 +18,7 @@ const Navbar = () => {
             logout: "Salir", welcome: "Hola", seguimiento: "Mi pedido", admin: "Admin"
         },
         en: {
-            home: "Home", bodegas: "Wineries", vinos: "Wines", historia: "History",
+            home: "Home", bodegas: "Wineries", vinos: "Wines", historia: "Our Story",
             contacto: "Contact", login: "Login", registro: "Register",
             logout: "Logout", welcome: "Hi", seguimiento: "Track order", admin: "Admin"
         }
@@ -35,7 +35,7 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="navbar-logo">
                 <NavLink to="/">
-                    <img src="/images/logo.jpg" alt="Logo" className="logo-img" />
+                    <img src="/images/mendoza-reserve-logo.png" alt="Mendoza Reserve — Boutique Wine Selections" className="logo-img" />
                 </NavLink>
             </div>
 

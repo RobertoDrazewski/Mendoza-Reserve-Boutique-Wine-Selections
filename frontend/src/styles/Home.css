@@ -17,12 +17,11 @@
   /* CAMBIO CLAVE: Volvemos a centrar verticalmente */
   align-items: center; 
   
-  /* ESPACIO DE SEGURIDAD PARA EL NAVBAR FIJO */
-  /* Ajusta este valor (130px - 150px) según la altura de tu navbar */
-  padding-top: 130px; 
-  
-  /* ESPACIO DE SEGURIDAD PARA EL FOOTER FIJO */
-  padding-bottom: 80px; 
+  /* ESPACIO DE SEGURIDAD PARA EL NAVBAR STICKY */
+  padding-top: 130px;
+
+  /* El footer ya no es "fixed" — con un poco de aire alcanza */
+  padding-bottom: 60px;
   
   margin: 0;
   

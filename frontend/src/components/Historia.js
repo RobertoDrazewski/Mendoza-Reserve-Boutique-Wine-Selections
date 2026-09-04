@@ -8,19 +8,23 @@ const Historia = () => {
   const content = {
     es: {
       title: "De Mendoza al Reino Unido",
-      subtitle: "Un puente entre el corazón de Mendoza y la gastronomía inglesa",
-      originTitle: "Mi Historia",
-      originText: "Soy Roberto, creador de Mendoza Reserve. Nací en Maipú, Mendoza, tierra de tradición y vides. A los 20 años emprendí un viaje que marcaría mi destino: viví un año en Italia y otro en España, para finalmente radicarme 13 años en el Reino Unido, donde me desempeñé como Head Chef.",
-      visionTitle: "Visión de Negocio",
-      visionText: "Como chef, identifiqué una brecha clara: en Mendoza existen pequeñas bodegas con vinos de calidad mundial que no están siendo aprovechados en el mercado inglés. Mi visión es generar un enlace directo entre el pequeño productor mendocino y las grandes cadenas de restaurantes argentinos y steak houses en Inglaterra. Garantizo que cada pequeña bodega pueda exportar sus vinos orgánicos para que, en cada paladar inglés, se disfrute la esencia de Mendoza, sintiéndose como si estuvieran allí, rodeados de la montaña y la vid."
+      subtitle: "Un puente directo entre las bodegas boutique de Mendoza y la mesa británica",
+      originTitle: "Nuestro Origen",
+      originText: "Mendoza Reserve nace de un recorrido poco común: nuestro fundador se formó como Head Chef durante 13 años en el Reino Unido, después de vivir en Italia y España. Ese paso por las cocinas inglesas le mostró de cerca algo que lo inquietaba: los mejores restaurantes argentinos y steak houses de Inglaterra rara vez servían los vinos boutique que realmente representan a Mendoza — las pequeñas bodegas familiares, no las etiquetas masivas.",
+      visionTitle: "Lo Que Hacemos",
+      visionText: "Somos el enlace directo entre pequeños productores mendocinos de calidad mundial y compradores profesionales en el Reino Unido — restaurantes, importadores y distribuidoras especializadas. Seleccionamos cada bodega personalmente, negociamos en su nombre y coordinamos la exportación, para que cada botella llegue con la trazabilidad, la historia y la calidad que un comprador exigente necesita.",
+      whyTitle: "Por Qué Trabajar Con Nosotros",
+      whyText: "Curaduría personal, no catálogo masivo: cada bodega es visitada y evaluada antes de sumarse. Trato directo con el productor, sin intermediarios de por medio, lo que garantiza mejores precios y trazabilidad completa. Y un socio que conoce ambos mundos — la producción en Mendoza y las exigencias del mercado gastronómico inglés — para que la incorporación de nuevas etiquetas sea simple y sin fricciones."
     },
     en: {
-      title: "From Mendoza to United Kingdom",
-      subtitle: "A bridge between the heart of Mendoza and English gastronomy",
-      originTitle: "My Story",
-      originText: "I am Roberto, founder of Mendoza Reserve. I was born in Maipú, Mendoza, a land of tradition and vines. At 20, I began a journey that would shape my destiny: I spent a year in Italy and a year in Spain, before settling for 13 years in the United Kingdom, where I worked as a Head Chef.",
-      visionTitle: "Business Vision",
-      visionText: "As a chef, I identified a clear gap: there are small wineries in Mendoza producing world-class wines that remain untapped in the English market. My vision is to create a direct link between small-scale Mendocino producers and the major Argentinian restaurants and steak houses in England. I ensure that every small winery can export their organic wines, allowing every English palate to enjoy them as if they were right there in Mendoza, surrounded by the mountains and the vines."
+      title: "From Mendoza to the United Kingdom",
+      subtitle: "A direct bridge between Mendoza's boutique wineries and the British table",
+      originTitle: "Our Origin",
+      originText: "Mendoza Reserve was born from an unusual path: our founder trained as a Head Chef for 13 years in the United Kingdom, after living in Italy and Spain. That time in English kitchens revealed a clear gap — the best Argentinian restaurants and steak houses in England rarely served the boutique wines that truly represent Mendoza: the small, family-run wineries, not the mass-market labels.",
+      visionTitle: "What We Do",
+      visionText: "We are the direct link between world-class small producers in Mendoza and professional buyers across the UK — restaurants, importers and specialist distributors. We personally select every winery, negotiate on their behalf and coordinate the export, so every bottle arrives with the traceability, the story and the quality a discerning buyer expects.",
+      whyTitle: "Why Work With Us",
+      whyText: "Personal curation, not a mass catalogue: every winery is visited and assessed before joining. Direct trade with the producer, with no layers of middlemen, which means better pricing and full traceability. And a partner who understands both worlds — production in Mendoza and the demands of the English hospitality trade — so bringing on a new label is simple and friction-free."
     }
   };
 
@@ -32,14 +36,18 @@ const Historia = () => {
     backgroundImage: "url('/images/bodegaAvion.PNG')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    backgroundAttachment: 'fixed',
+    // 'fixed' se ve lindo (efecto parallax) pero se calcula contra el viewport, no
+    // contra el alto real de la sección — si el contenido crece más de una pantalla
+    // (como con 3 columnas de texto), deja un hueco negro debajo. Con 'scroll' la
+    // imagen siempre cubre el alto real de la sección, sin huecos, en cualquier página.
+    backgroundAttachment: 'scroll',
     minHeight: '100vh',
     width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    padding: '0 20px', // Quitamos el padding vertical para controlar la altura
+    padding: '60px 20px',
     boxSizing: 'border-box'
   };
 
@@ -64,6 +72,11 @@ const Historia = () => {
             <article className="historia-article-pure-noscroll">
               <h2 className="historia-block-title-pure-noscroll">{t.visionTitle}</h2>
               <p className="historia-block-text-pure-noscroll">{t.visionText}</p>
+            </article>
+
+            <article className="historia-article-pure-noscroll">
+              <h2 className="historia-block-title-pure-noscroll">{t.whyTitle}</h2>
+              <p className="historia-block-text-pure-noscroll">{t.whyText}</p>
             </article>
           </div>
         </div>

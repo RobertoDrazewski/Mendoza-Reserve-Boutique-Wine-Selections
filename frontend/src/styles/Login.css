@@ -2,7 +2,7 @@
 
 .login-page {
   width: 100%;
-  padding: 150px 20px 100px;
+  padding: 130px 20px 60px; /* el footer ya no es "fixed", no hace falta tanto aire abajo */
   min-height: 100vh;
   background-color: #fdfaf6; /* Fondo crema muy sutil para resaltar la card blanca */
   display: flex;

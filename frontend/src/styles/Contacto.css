@@ -3,7 +3,7 @@
 .contacto-page {
   width: 100%;
   background-color: #fdfaf6; /* Un tono crema muy sutil de fondo */
-  padding: 150px 20px 100px; 
+  padding: 130px 20px 60px; /* el footer ya no es "fixed", no hace falta tanto aire abajo */
   min-height: 100vh;
   display: flex;
   justify-content: center;
