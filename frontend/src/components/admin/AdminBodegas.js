@@ -123,7 +123,7 @@ const AdminBodegas = () => {
                                                     <label>Contacto<input value={editForm.contacto_nombre} onChange={(e) => setEditForm({ ...editForm, contacto_nombre: e.target.value })} /></label>
                                                     <label>Comisión %<input type="number" step="0.5" value={editForm.comision_pct} onChange={(e) => setEditForm({ ...editForm, comision_pct: e.target.value })} /></label>
                                                     <label>Logo URL<input value={editForm.logo_url} onChange={(e) => setEditForm({ ...editForm, logo_url: e.target.value })} /></label>
-                                                    <label>Imagen (archivo en /images)<input value={editForm.imagen} onChange={(e) => setEditForm({ ...editForm, imagen: e.target.value })} /></label>
+                                                    <label>Imagen (archivo en /images o URL completa)<input value={editForm.imagen} onChange={(e) => setEditForm({ ...editForm, imagen: e.target.value })} /></label>
                                                     <label className="full">Descripción<textarea rows={2} value={editForm.descripcion} onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })} /></label>
                                                     <label className="full">Notas internas<textarea rows={2} value={editForm.notas} onChange={(e) => setEditForm({ ...editForm, notas: e.target.value })} /></label>
                                                 </div>

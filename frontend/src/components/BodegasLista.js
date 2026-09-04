@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { resolveBodegaImage } from '../utils/resolveImage';
 import '../styles/BodegasLista.css';
 
 const BodegasLista = () => {
@@ -110,7 +111,7 @@ const BodegasLista = () => {
                             <div className="bodega-image-wrapper">
                                 {item.imagen ? (
                                     <img
-                                        src={`/images/${item.imagen}`}
+                                        src={resolveBodegaImage(item.imagen)}
                                         alt={item.nombre}
                                         onError={(e) => {
                                             e.target.onerror = null;

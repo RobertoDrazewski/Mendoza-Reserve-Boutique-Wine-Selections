@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useLanguage } from '../context/LanguageContext';
 import { useCart } from '../context/CartContext';
+import { resolveBodegaImage } from '../utils/resolveImage';
 import '../styles/BodegaDetalle.css';
 
 const BodegaDetalle = () => {
@@ -82,7 +83,7 @@ const BodegaDetalle = () => {
                     <div className="logo-container">
                         {bodega.imagen ? (
                             <img
-                                src={`/images/${bodega.imagen}`}
+                                src={resolveBodegaImage(bodega.imagen)}
                                 alt={bodega.nombre}
                                 className="bodega-logo-small"
                                 onError={(e) => { e.target.onerror = null; e.target.src = '/images/logo.jpg'; }}
