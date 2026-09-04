@@ -30,6 +30,12 @@ const Home = () => {
     <div className="home-container">
       <section className="hero" style={heroStyle}>
         <div className="hero-content">
+          <img
+            src="/images/mendoza-reserve-logo-gold.png"
+            alt="Mendoza Reserve"
+            className="hero-logo"
+          />
+          <p className="hero-tagline">Boutique Wine Selections</p>
           <h1 className="hero-title-italic">{currentT.heroTitle}</h1>
           <p className="hero-subtitle-elegant">{currentT.heroSub}</p>
           <Link to="/bodegas" className="btn-winery">

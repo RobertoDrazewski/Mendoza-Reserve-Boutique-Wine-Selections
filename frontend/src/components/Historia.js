@@ -30,32 +30,17 @@ const Historia = () => {
 
   const t = content[lang] || content['es'];
 
-  // Definimos el fondo aquí para evitar errores de compilación de Webpack
-  // Mantenemos 'fixed' para un efecto elegante al hacer scroll
+  // Solo la imagen va inline (es la única parte específica de esta página);
+  // el padding/layout vive en Historia.css como clase, así puede tener sus
+  // propios media queries para mobile — un valor de padding fijo en JS no
+  // podría adaptarse al navbar más chico del celular.
   const sectionStyle = {
     backgroundImage: "url('/images/bodegaAvion.PNG')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    // 'fixed' se ve lindo (efecto parallax) pero se calcula contra el viewport, no
-    // contra el alto real de la sección — si el contenido crece más de una pantalla
-    // (como con 3 columnas de texto), deja un hueco negro debajo. Con 'scroll' la
-    // imagen siempre cubre el alto real de la sección, sin huecos, en cualquier página.
-    backgroundAttachment: 'scroll',
-    minHeight: '100vh',
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    padding: '60px 20px',
-    boxSizing: 'border-box'
   };
 
   return (
     <div className="historia-page-pure-noscroll">
-      <section style={sectionStyle}>
-        {/* ELIMINAMOS EL OVERLAY OSCURO PARA MOSTRAR LA IMAGEN PURA */}
-        
+      <section className="historia-hero-section" style={sectionStyle}>
         <div className="historia-content-pure-noscroll">
           <header className="historia-header-pure-noscroll">
             <h1 className="historia-title-pure-noscroll">{t.title}</h1>

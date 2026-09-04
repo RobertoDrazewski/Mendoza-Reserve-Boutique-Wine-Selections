@@ -80,27 +80,42 @@ const Vinos = () => {
         setTimeout(() => setAdded(null), 1500);
     };
 
-    if (loading) return <div className="status-message">{currentT.loading}</div>;
-    if (error) return <div className="status-message error">{error}</div>;
+    if (loading) return (
+        <div className="status-message" style={{ backgroundImage: "url('/images/fondo-historia.png')" }}>
+            <span className="status-message-text">{currentT.loading}</span>
+        </div>
+    );
+    if (error) return (
+        <div className="status-message error" style={{ backgroundImage: "url('/images/fondo-historia.png')" }}>
+            <span className="status-message-text">{error}</span>
+        </div>
+    );
 
     return (
-        <div className="vinos-page">
-            <h1 className="vinos-title">{currentT.title}</h1>
-            <p className="vinos-subtitle">{currentT.subtitle}</p>
+        <div className="vinos-page" style={{ backgroundImage: "url('/images/fondo-historia.png')" }}>
+            {/* La foto de fondo cubre toda la página (de punta a punta, hasta el
+                footer) con "background-attachment: fixed", así que su tamaño se
+                calcula contra la ventana y no contra el alto del contenido —
+                nunca se deforma, aunque la grilla de abajo crezca mucho. */}
+            <div className="vinos-hero-inner">
+                <h1 className="vinos-title">{currentT.title}</h1>
+                <p className="vinos-subtitle">{currentT.subtitle}</p>
 
-            {bodegas.length > 1 && (
-                <div className="zona-filtro">
-                    <button className={!bodegaFiltro ? 'active' : ''} onClick={() => setBodegaFiltro('')}>
-                        {currentT.allWineries}
-                    </button>
-                    {bodegas.map(([id, nombre]) => (
-                        <button key={id} className={String(bodegaFiltro) === String(id) ? 'active' : ''} onClick={() => setBodegaFiltro(id)}>
-                            {nombre}
+                {bodegas.length > 1 && (
+                    <div className="zona-filtro">
+                        <button className={!bodegaFiltro ? 'active' : ''} onClick={() => setBodegaFiltro('')}>
+                            {currentT.allWineries}
                         </button>
-                    ))}
-                </div>
-            )}
+                        {bodegas.map(([id, nombre]) => (
+                            <button key={id} className={String(bodegaFiltro) === String(id) ? 'active' : ''} onClick={() => setBodegaFiltro(id)}>
+                                {nombre}
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
 
+            <div className="vinos-container">
             <div className="vinos-grid">
                 {visibles.length > 0 ? (
                     visibles.map((vino) => (
@@ -131,6 +146,7 @@ const Vinos = () => {
                 ) : (
                     <p className="no-vinos">{currentT.noWines}</p>
                 )}
+            </div>
             </div>
         </div>
     );

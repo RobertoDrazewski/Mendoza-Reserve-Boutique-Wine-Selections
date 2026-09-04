@@ -87,22 +87,29 @@ const OrderTracking = () => {
     };
 
     return (
-        <div className="tracking-container">
-            <h1>{currentT.title}</h1>
-            <p className="tracking-subtitle">{currentT.subtitle}</p>
+        <div className="tracking-page" style={{ backgroundImage: "url('/images/historia.JPG')" }}>
+            {/* La foto de fondo cubre toda la página (de punta a punta, hasta el
+                footer) con "background-attachment: fixed", así que su tamaño se
+                calcula contra la ventana y no contra el alto del contenido —
+                nunca se deforma, aunque aparezcan muchos pedidos después. */}
+            <div className="tracking-hero-inner">
+                <h1>{currentT.title}</h1>
+                <p className="tracking-subtitle">{currentT.subtitle}</p>
 
-            <form className="tracking-form" onSubmit={handleSubmit}>
-                <label>
-                    {currentT.orderId}
-                    <input value={cartGroupId} onChange={(e) => setCartGroupId(e.target.value)} required placeholder="c8191f16-1fe8-..." />
-                </label>
-                <label>
-                    {currentT.email}
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                </label>
-                <button type="submit" disabled={loading}>{loading ? currentT.searching : currentT.search}</button>
-            </form>
+                <form className="tracking-form" onSubmit={handleSubmit}>
+                    <label>
+                        {currentT.orderId}
+                        <input value={cartGroupId} onChange={(e) => setCartGroupId(e.target.value)} required placeholder="c8191f16-1fe8-..." />
+                    </label>
+                    <label>
+                        {currentT.email}
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    </label>
+                    <button type="submit" disabled={loading}>{loading ? currentT.searching : currentT.search}</button>
+                </form>
+            </div>
 
+            <div className="tracking-container">
             {error && searched && <p className="tracking-error">{error}</p>}
 
             {orders && orders.length > 0 && (
@@ -144,6 +151,7 @@ const OrderTracking = () => {
             {orders && orders.length > 0 && (
                 <ChatWidget cartGroupId={orders[0].cart_group_id} email={email} />
             )}
+            </div>
         </div>
     );
 };

@@ -1,47 +1,64 @@
-/* --- Contenedor Principal --- */
+/* --- Navbar: fijo, flota sobre el contenido (ya no reserva su propio
+   espacio en el flujo), una sola fila liviana (sin logo — la marca ahora
+   vive en grande en el hero del Home). Mismo fondo vino que el footer en
+   TODAS las páginas, letras blancas, y se ponen doradas al pasar el mouse
+   — ya no hay una variante "transparente" distinta por página. */
+
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 60px;
-    background-color: #fdfaf6; /* Crema cálido — nunca blanco puro */
-    border-bottom: 2px solid #b8933a; /* Filete dorado */
-    box-shadow: 0 4px 14px rgba(61, 18, 25, 0.08);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
-    height: 100px; /* Altura controlada */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, #4a161d 0%, #3d1219 100%);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
-/* --- LOGO --- */
-.logo-img {
-    height: 78px;
-    width: auto;
-    transition: transform 0.4s ease;
-    cursor: pointer;
+.navbar-menu-row {
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.logo-img:hover {
-    transform: scale(1.05);
+.navbar-menu-inner {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    box-sizing: border-box;
+    padding: 18px 40px;
 }
 
 /* --- MENÚ CENTRAL --- */
+/* flex: 1 + min-width: 0 = el menú es el elemento "elástico": cuando no
+   entra todo en una fila, envuelve sus propios links (ya tiene
+   flex-wrap) en vez de empujar o superponerse con las banderas/carrito,
+   que nunca cambian de tamaño. Así jamás se pisan, sea cual sea el ancho
+   de la ventana. */
 .navbar-menu {
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 22px;
-    row-gap: 4px;
+    justify-content: center;
+    gap: 28px;
+    row-gap: 6px;
 }
 
 .navbar-menu a {
     text-decoration: none;
-    color: #4a2c30;
     font-family: 'Playfair Display', 'Georgia', serif;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     white-space: nowrap;
+    color: #ffffff;
     transition: color 0.3s ease;
     position: relative;
 }
@@ -51,40 +68,38 @@
     position: absolute;
     left: 0; right: 0; bottom: -6px;
     height: 2px;
-    background-color: #b8933a;
+    background-color: #e4c98a;
     transform: scaleX(0);
     transition: transform 0.3s ease;
 }
 
-.navbar-menu a:hover, .navbar-menu a.active {
-    color: #a63a43;
+.navbar-menu a:hover,
+.navbar-menu a.active {
+    color: #e4c98a;
 }
 
 .navbar-menu a:hover::after, .navbar-menu a.active::after {
     transform: scaleX(1);
 }
 
-/* --- LADO DERECHO --- */
-.navbar-right-side {
+/* Idioma / carrito / login — a la derecha de la fila de menú. Ancho fijo
+   (no se achica ni envuelve): siempre visible completo. */
+.auth-row {
+    flex: 0 0 auto;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-    min-width: 220px;
+    align-items: center;
+    gap: 16px;
 }
 
-/* Fila de Autenticación (Login/Register o Bienvenida) */
 .auth-links {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
 }
 
-/* Unificamos estilo de links y botón de logout */
 .auth-link-btn, .auth-links a {
     text-decoration: none;
-    color: #b38b59;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -92,66 +107,41 @@
     border: none;
     cursor: pointer !important;
     transition: all 0.3s ease;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
+    color: #e9dcd0;
 }
 
 .auth-link-btn:hover, .auth-links a:hover {
-    color: #000;
+    color: #e4c98a;
 }
 
 .auth-separator {
-    color: #ddd;
     margin: 0 2px;
+    color: rgba(255, 255, 255, 0.3);
 }
 
 .user-welcome {
-    color: #666;
+    color: #e9dcd0;
+    font-size: 0.8rem;
 }
 
 .user-welcome strong {
-    color: #a63a43;
+    color: #e4c98a;
 }
 
-/* --- ACCIONES (BANDERAS Y CARRITO) --- */
-.actions-row {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-.language-selector {
-    display: flex;
-    gap: 10px;
-}
-
-.flag-emoji {
-    font-size: 24px;
-    cursor: pointer !important;
-    transition: all 0.3s ease;
-    filter: grayscale(80%);
-    opacity: 0.6;
-}
-
-.flag-emoji:hover, .active-flag {
-    filter: grayscale(0%);
-    opacity: 1;
-    transform: scale(1.1);
-}
-
-/* --- CARRITO (ESTILO ORIGINAL RECUPERADO) --- */
 .cart-btn-nav {
     position: relative;
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    color: #ffffff;
     cursor: pointer !important;
-    color: #333;
     transition: all 0.3s ease;
 }
 
 .cart-btn-nav:hover {
-    color: #a63a43;
     transform: scale(1.1);
+    color: #e4c98a;
 }
 
 .cart-badge {
@@ -160,78 +150,56 @@
     right: -12px;
     background-color: #a63a43;
     color: white;
-    font-size: 0.65rem;
-    min-width: 18px;
-    height: 18px;
+    font-size: 0.62rem;
+    min-width: 17px;
+    height: 17px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
     font-weight: bold;
-    border: 2px solid white;
+    border: 2px solid #3d1219;
 }
 
-/* --- RESPONSIVO MEJORADO --- */
-@media (max-width: 768px) {
-    .navbar {
-        height: auto; 
-        flex-direction: column; /* Apilamos secciones */
-        padding: 10px 15px;
+.language-selector {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.flag-emoji {
+    font-size: 20px;
+    cursor: pointer !important;
+    transition: all 0.3s ease;
+    filter: grayscale(60%);
+    opacity: 0.7;
+}
+
+.flag-emoji:hover, .active-flag {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 900px) {
+    .navbar-menu-inner {
+        padding: 14px 20px;
+        flex-direction: column;
         gap: 10px;
     }
-
-    /* Reducimos el logo para que no ocupe toda la pantalla */
-    .logo-img {
-        height: 60px; /* Tamaño más cómodo para móvil */
-    }
-
-    /* El menú de navegación se vuelve horizontal y scrolleable si es necesario */
     .navbar-menu {
-        width: 100%;
-        justify-content: center;
-        gap: 15px;
-        margin: 5px 0;
-        flex-wrap: wrap; /* Para que si no caben, bajen a otra línea */
-    }
-
-    .navbar-menu a {
-        font-size: 0.85rem; /* Letra un poco más chica */
-        letter-spacing: 1px;
-    }
-
-    /* La parte derecha (Login/Banderas) */
-    .navbar-right-side {
-        width: 100%;
-        align-items: center; /* Centramos todo en el móvil */
-        min-width: unset; /* Quitamos el mínimo de 280px que empuja todo */
-        gap: 10px;
-    }
-
-    .auth-links {
-        justify-content: center;
-        width: 100%;
-    }
-
-    /* Fila de acciones (Banderas y Carrito) */
-    .actions-row {
-        width: 100%;
-        justify-content: center; /* Centramos banderas y carrito */
-        gap: 30px;
-        border-top: 1px solid #eee; /* Una sutil separación */
-        padding-top: 10px;
-    }
-
-    .flag-emoji {
-        font-size: 20px; /* Banderas un pelo más chicas */
-    }
-}
-
-/* Para celulares muy pequeños (iPhone SE, etc.) */
-@media (max-width: 480px) {
-    .logo-img {
-        height: 50px;
+        gap: 14px;
     }
     .navbar-menu a {
         font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+    .auth-row {
+        justify-content: center;
+        gap: 14px;
+    }
+    .flag-emoji {
+        font-size: 18px;
     }
 }

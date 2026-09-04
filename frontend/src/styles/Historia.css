@@ -2,32 +2,48 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    min-height: 100vh; 
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     position: relative;
-    background-color: #000; 
+    background-color: #000;
 }
 
-.historia-section-full {
-    flex: 1; 
+.historia-hero-section {
+    flex: 1;
     width: 100%;
     margin: 0;
-    padding: 60px 0; 
+    min-height: 100vh;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Mantenemos el comportamiento, pero sin la ruta conflictiva */
+    position: relative;
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    background-attachment: scroll;
     background-repeat: no-repeat;
+    /* Padding fijo (no solo centrado) para que el título SIEMPRE quede
+       debajo del navbar transparente, sin importar cuánto texto haya —
+       si dependiéramos solo del centrado vertical, un bloque de texto más
+       largo (o un idioma con palabras más largas) empuja el título hasta
+       arriba de todo y el navbar lo tapa. */
+    padding: 140px 20px 60px;
+}
+
+/* Velo oscuro suave sobre la foto — de paso, ayuda a que el texto se lea
+   bien incluso en las zonas más claras de la imagen. */
+.historia-hero-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(20, 6, 10, 0.32) 0%, rgba(20, 6, 10, 0.18) 35%, rgba(20, 6, 10, 0.4) 100%);
 }
 
 .historia-content-pure-noscroll {
     position: relative;
     z-index: 2;
-    max-width: 1100px; 
+    max-width: 1100px;
     width: 100%;
     margin: 0 auto;
     text-align: center;
@@ -38,7 +54,7 @@
 
 .historia-title-pure-noscroll {
     color: #ffffff;
-    font-size: 3rem; 
+    font-size: 3rem;
     text-transform: uppercase;
     letter-spacing: 4px;
     margin-bottom: 10px;
@@ -57,7 +73,7 @@
 .historia-divider-pure-noscroll {
     width: 80px;
     height: 3px;
-    background-color: #a63a43; 
+    background-color: #a63a43;
     margin: 20px auto 40px;
 }
 
@@ -76,7 +92,7 @@
 
 .historia-article-pure-noscroll {
     background: transparent;
-    text-align: left; 
+    text-align: left;
 }
 
 .historia-block-title-pure-noscroll {
@@ -96,13 +112,15 @@
 }
 
 @media (max-width: 768px) {
-    .historia-section-full {
-        background-attachment: scroll; 
-        padding: 40px 20px;
+    .historia-hero-section {
+        /* El navbar transparente en mobile mide ~195px (logo + menú en
+           columna + fila de login/registro), así que el padding tiene que
+           ser mayor que en desktop, no menor. */
+        padding: 160px 20px 40px;
     }
     .historia-grid-pure-noscroll {
         grid-template-columns: 1fr;
-        gap: 40px; 
+        gap: 40px;
     }
     .historia-article-pure-noscroll { text-align: center; }
 }

@@ -2,12 +2,30 @@
 
 .contacto-page {
   width: 100%;
-  background-color: #fdfaf6; /* Un tono crema muy sutil de fondo */
-  padding: 130px 20px 60px; /* el footer ya no es "fixed", no hace falta tanto aire abajo */
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  /* Padding fijo arriba (no solo centrado) para que el título siempre
+     quede debajo del navbar transparente, sin importar el alto del texto. */
+  padding: 140px 20px 60px;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.contacto-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 6, 10, 0.35) 0%, rgba(20, 6, 10, 0.2) 40%, rgba(20, 6, 10, 0.45) 100%);
+}
+
+.contacto-container {
+  position: relative;
+  z-index: 1;
 }
 
 .contacto-container {
@@ -22,35 +40,39 @@
   font-style: italic;
   font-weight: 200;
   font-size: 3rem; /* Un poco más pequeño para armonizar */
-  color: #d4af37;
+  color: #f0d78a;
   margin-bottom: 5px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
 }
 
 .contacto-subtitle {
   font-family: 'Inter', sans-serif;
-  color: #a63a43;
+  color: #f4ecdf;
   font-size: 0.8rem;
   margin-bottom: 35px;
   letter-spacing: 3px;
   text-transform: uppercase;
   font-weight: 400;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
 }
 
 .contacto-form {
-  background: #ffffff;
-  padding: 40px;
-  /* --- CAMBIO: Bordes muy redondeados --- */
-  border-radius: 25px; 
-  border: 1px solid rgba(212, 175, 55, 0.3); /* Dorado más suave */
+  /* Vidrio esmerilado: se ve la foto detrás, pero el texto queda perfectamente
+     legible — más elegante que una tarjeta blanca lisa flotando sobre la foto. */
+  background: rgba(253, 250, 246, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 44px;
+  border-radius: 28px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
   text-align: left;
-  /* Sombra más suave para resaltar la forma redonda */
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
   transition: all 0.4s ease;
 }
 
 .contacto-form:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 30px 65px rgba(0, 0, 0, 0.4);
 }
 
 .form-group {
@@ -117,9 +139,10 @@
 
 @media (max-width: 768px) {
     .contacto-page {
-        /* Ajustamos el padding superior para el navbar móvil */
-        padding: 120px 15px 60px; 
-        min-height: auto; /* Dejamos que crezca según el contenido */
+        /* El navbar transparente en mobile mide ~195px (logo + menú en
+           columna + fila de login/registro), más alto que en desktop. */
+        padding: 160px 15px 40px;
+        min-height: 100vh;
     }
 
     .contacto-container {

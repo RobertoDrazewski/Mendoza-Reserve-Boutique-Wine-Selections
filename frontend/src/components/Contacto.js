@@ -73,7 +73,7 @@ const Contacto = () => {
   };
 
   return (
-    <div className="contacto-page">
+    <div className="contacto-page" style={{ backgroundImage: "url('/images/fondo.jpg')" }}>
       <div className="contacto-container">
         <h1 className="contacto-title">{currentT.title}</h1>
         <p className="contacto-subtitle">{currentT.subtitle}</p>
