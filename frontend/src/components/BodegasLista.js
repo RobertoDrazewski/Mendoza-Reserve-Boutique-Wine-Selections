@@ -128,6 +128,7 @@ const BodegasLista = () => {
                             <div className="card-content">
                                 <h3 className="bodega-name">{item.nombre}</h3>
                                 {item.zona && <p className="bodega-zona">{item.zona}{item.subzona ? ` · ${item.subzona}` : ''}</p>}
+                                {item.descripcion && <p className="bodega-bio-snippet">{item.descripcion}</p>}
                                 <div className="contact-details">
                                     {item.telefono && <p><strong>{currentT.phone}</strong> {item.telefono}</p>}
                                     {item.direccion && <p><strong>{currentT.address}</strong> {item.direccion}</p>}

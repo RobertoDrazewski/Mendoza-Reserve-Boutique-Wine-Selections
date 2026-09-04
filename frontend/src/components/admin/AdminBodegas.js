@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import { resolveBodegaImage } from '../../utils/resolveImage';
 
 const ESTADOS = ['pendiente_contacto', 'contactada', 'activa', 'inactiva', 'rechazada'];
+const DESCRIPCION_MAX = 1500;
 
 const AdminBodegas = () => {
     const [bodegas, setBodegas] = useState([]);
@@ -11,6 +13,8 @@ const AdminBodegas = () => {
     const [editId, setEditId] = useState(null);
     const [editForm, setEditForm] = useState({});
     const [savingId, setSavingId] = useState(null);
+    const [uploadingId, setUploadingId] = useState(null);
+    const [generandoId, setGenerandoId] = useState(null);
     const [msg, setMsg] = useState(null);
 
     const API_URL = process.env.REACT_APP_API_URL || '/api';
@@ -66,6 +70,38 @@ const AdminBodegas = () => {
         }
     };
 
+    const subirImagen = async (id, file) => {
+        if (!file) return;
+        setUploadingId(id);
+        try {
+            const data = new FormData();
+            data.append('imagen', file);
+            const res = await axios.post(`${API_URL}/bodegas/${id}/imagen`, data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setEditForm((prev) => ({ ...prev, imagen: res.data.imagen }));
+            setBodegas((prev) => prev.map((b) => (b.id === id ? { ...b, imagen: res.data.imagen } : b)));
+            setMsg({ type: 'ok', text: 'Foto subida con éxito.' });
+        } catch (err) {
+            setMsg({ type: 'error', text: err.response?.data?.error || 'Error al subir la foto.' });
+        } finally {
+            setUploadingId(null);
+        }
+    };
+
+    const generarBio = async (id) => {
+        setGenerandoId(id);
+        try {
+            const res = await axios.post(`${API_URL}/bodegas/${id}/generar-bio`);
+            setEditForm((prev) => ({ ...prev, descripcion: res.data.descripcion }));
+            setMsg({ type: 'ok', text: 'Descripción generada — revisala y guardá los cambios para publicarla.' });
+        } catch (err) {
+            setMsg({ type: 'error', text: err.response?.data?.error || 'Error al generar la descripción.' });
+        } finally {
+            setGenerandoId(null);
+        }
+    };
+
     const visibles = bodegas.filter((b) => !busqueda || b.nombre.toLowerCase().includes(busqueda.toLowerCase()));
 
     return (
@@ -115,6 +151,33 @@ const AdminBodegas = () => {
                                     {editId === b.id && (
                                         <tr className="admin-edit-row">
                                             <td colSpan={6}>
+                                                <div className="admin-foto-row">
+                                                    <div className="admin-foto-preview">
+                                                        {editForm.imagen ? (
+                                                            <img
+                                                                src={resolveBodegaImage(editForm.imagen)}
+                                                                alt={b.nombre}
+                                                                onError={(e) => { e.target.onerror = null; e.target.src = '/images/logo.jpg'; }}
+                                                            />
+                                                        ) : (
+                                                            <span className="admin-foto-preview-vacia">Sin foto</span>
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <label className="btn-primary-sm admin-foto-btn">
+                                                            {uploadingId === b.id ? 'Subiendo...' : 'Subir foto a mano'}
+                                                            <input
+                                                                type="file"
+                                                                accept="image/jpeg,image/png,image/webp"
+                                                                hidden
+                                                                disabled={uploadingId === b.id}
+                                                                onChange={(e) => subirImagen(b.id, e.target.files[0])}
+                                                            />
+                                                        </label>
+                                                        <p className="admin-small">JPG, PNG o WEBP, hasta 6MB. Reemplaza la foto actual de esta bodega.</p>
+                                                    </div>
+                                                </div>
+
                                                 <div className="admin-edit-grid">
                                                     <label>Email<input value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} /></label>
                                                     <label>Teléfono<input value={editForm.telefono} onChange={(e) => setEditForm({ ...editForm, telefono: e.target.value })} /></label>
@@ -124,7 +187,26 @@ const AdminBodegas = () => {
                                                     <label>Comisión %<input type="number" step="0.5" value={editForm.comision_pct} onChange={(e) => setEditForm({ ...editForm, comision_pct: e.target.value })} /></label>
                                                     <label>Logo URL<input value={editForm.logo_url} onChange={(e) => setEditForm({ ...editForm, logo_url: e.target.value })} /></label>
                                                     <label>Imagen (archivo en /images o URL completa)<input value={editForm.imagen} onChange={(e) => setEditForm({ ...editForm, imagen: e.target.value })} /></label>
-                                                    <label className="full">Descripción<textarea rows={2} value={editForm.descripcion} onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })} /></label>
+                                                    <label className="full">
+                                                        <span className="admin-label-row">
+                                                            Descripción
+                                                            <button
+                                                                type="button"
+                                                                className="btn-link-edit"
+                                                                disabled={generandoId === b.id}
+                                                                onClick={() => generarBio(b.id)}
+                                                            >
+                                                                {generandoId === b.id ? 'Generando...' : '✨ Generar con IA'}
+                                                            </button>
+                                                        </span>
+                                                        <textarea
+                                                            rows={4}
+                                                            maxLength={DESCRIPCION_MAX}
+                                                            value={editForm.descripcion}
+                                                            onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })}
+                                                        />
+                                                        <span className="admin-char-count">{(editForm.descripcion || '').length} / {DESCRIPCION_MAX}</span>
+                                                    </label>
                                                     <label className="full">Notas internas<textarea rows={2} value={editForm.notas} onChange={(e) => setEditForm({ ...editForm, notas: e.target.value })} /></label>
                                                 </div>
                                                 <button className="btn-primary-sm" disabled={savingId === b.id} onClick={() => guardarEdit(b.id)}>

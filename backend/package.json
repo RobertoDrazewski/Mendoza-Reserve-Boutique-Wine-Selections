@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "actualizar-imagenes-bodegas": "node scripts/actualizar_imagenes_bodegas.js"
+    "actualizar-imagenes-bodegas": "node scripts/actualizar_imagenes_bodegas.js",
+    "crear-admin": "node scripts/crear_admin.js"
   },
   "keywords": [
     "express",
@@ -23,6 +24,7 @@
     "express": "^5.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.3.0",
     "mysql2": "^3.20.0",
     "openai": "^7.10.0",
     "resend": "^6.26.0"

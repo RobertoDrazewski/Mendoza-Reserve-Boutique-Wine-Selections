@@ -1,14 +1,12 @@
-const OpenAI = require('openai');
 const db = require('../config/db');
 const { emailNuevoChatCliente } = require('../services/emailService');
+const { openai, MODEL } = require('../services/openaiClient');
 
 // Este chat es un asistente ACOTADO: sólo puede consultar el pedido puntual
 // (cart_group_id + email) que ya se verificó en la página de seguimiento —
 // nunca tiene acceso libre a la base de datos ni a pedidos de otra persona.
 // Requiere que Roberto configure su propia OPENAI_API_KEY para el SaaS
 // (independiente de cualquier otra integración).
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
-const MODEL = process.env.OPENAI_MODEL || 'gpt-5.6-luna';
 
 async function buscarPedido(cartGroupId, email) {
     const [orders] = await db.query(

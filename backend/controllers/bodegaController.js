@@ -1,4 +1,8 @@
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
 const db = require('../config/db');
+const { openai, MODEL } = require('../services/openaiClient');
 
 // Genera un slug simple a partir del nombre (usado al crear una bodega sin slug explícito)
 function slugify(nombre) {
@@ -168,5 +172,100 @@ exports.deleteBodega = async (req, res) => {
     } catch (error) {
         console.error('Error al eliminar bodega:', error.message);
         res.status(500).json({ error: 'Error al eliminar la bodega' });
+    }
+};
+
+// 8. Subir una foto a mano para la bodega (admin) — se guarda en backend/images/bodegas
+// y queda servida en /images/bodegas/<archivo> (misma carpeta estática que ya sirve
+// index.js). Reemplaza el campo "imagen" por el nombre de archivo nuevo.
+// OJO: en Railway sin un Volume montado en backend/images, esta carpeta es efímera y
+// las fotos subidas así se pierden en el próximo deploy — hace falta un Volume para
+// que persistan (ver README/checklist de deploy).
+const CARPETA_UPLOADS = path.join(__dirname, '..', 'images', 'bodegas');
+fs.mkdirSync(CARPETA_UPLOADS, { recursive: true });
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, CARPETA_UPLOADS),
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+        cb(null, `bodega-${req.params.id}-${Date.now()}${ext}`);
+    }
+});
+
+const tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp'];
+exports.uploadImagenMiddleware = multer({
+    storage,
+    limits: { fileSize: 6 * 1024 * 1024 }, // 6MB
+    fileFilter: (req, file, cb) => {
+        if (!tiposPermitidos.includes(file.mimetype)) {
+            return cb(new Error('Formato no soportado. Usá JPG, PNG o WEBP.'));
+        }
+        cb(null, true);
+    }
+}).single('imagen');
+
+exports.subirImagenBodega = async (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No se recibió ningún archivo (campo "imagen").' });
+
+    const valorImagen = `bodegas/${req.file.filename}`;
+    try {
+        await db.query('UPDATE bodegas SET imagen = ? WHERE id = ?', [valorImagen, req.params.id]);
+        res.json({ imagen: valorImagen, message: 'Foto subida y asignada con éxito.' });
+    } catch (error) {
+        console.error('Error al guardar la imagen subida:', error.message);
+        res.status(500).json({ error: 'La foto se subió pero no se pudo guardar en la bodega.' });
+    }
+};
+
+// 9. Generar una bio/descripción con IA (admin) — arma el texto a partir de los datos
+// que ya tenemos de la bodega y lo devuelve para que el admin lo revise en el
+// formulario de edición ANTES de guardarlo (no pisa "descripcion" directo en la DB).
+exports.generarBioBodega = async (req, res) => {
+    if (!openai) {
+        return res.status(503).json({ error: 'La generación con IA todavía no está configurada (falta OPENAI_API_KEY en el servidor).' });
+    }
+
+    const LIMITE_CARACTERES = 1500;
+
+    try {
+        const [rows] = await db.query('SELECT * FROM bodegas WHERE id = ?', [req.params.id]);
+        if (rows.length === 0) return res.status(404).json({ error: 'Bodega no encontrada' });
+        const b = rows[0];
+
+        const datosConocidos = [
+            `Nombre: ${b.nombre}`,
+            b.zona && `Zona: ${b.zona}${b.subzona ? ' (' + b.subzona + ')' : ''}`,
+            b.direccion && `Dirección: ${b.direccion}`,
+            b.sitio_web && `Sitio web: ${b.sitio_web}`,
+            b.contacto_nombre && `Contacto: ${b.contacto_nombre}`,
+            b.notas && `Notas internas: ${b.notas}`,
+            b.descripcion && `Descripción actual (para mejorar o reemplazar, no repetir literal): ${b.descripcion}`,
+        ].filter(Boolean).join('\n');
+
+        const systemPrompt = `Sos un redactor especializado en marketing de vino y turismo enológico. Escribís bios de bodegas de Mendoza para un marketplace B2B (Mendoza Reserve) que las conecta con compradores e importadores de vino en el Reino Unido.
+Escribí en español, en un tono cálido, profesional y creíble — nada de superlativos vacíos ni inventar premios, certificaciones, años de fundación o varietales que no te dieron como dato. Si falta un dato, no lo inventes: simplemente no lo menciones.
+La bio tiene que servir para DOS cosas a la vez: (a) que Roberto (el dueño de Mendoza Reserve) se la pueda mostrar a la bodega como algo atractivo cuando la contacta por primera vez, y (b) que funcione como la descripción pública de la bodega en el sitio.
+Extensión: máximo ${LIMITE_CARACTERES} caracteres (contando espacios), 2 a 4 párrafos cortos. Devolvé SOLO el texto de la bio, sin título, sin comillas, sin markdown.`;
+
+        const userPrompt = `Datos disponibles de la bodega:\n${datosConocidos}\n\nEscribí la bio.`;
+
+        const response = await openai.chat.completions.create({
+            model: MODEL,
+            max_tokens: 900,
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+            ]
+        });
+
+        let bio = response.choices?.[0]?.message?.content?.trim() || '';
+        if (bio.length > LIMITE_CARACTERES) bio = bio.slice(0, LIMITE_CARACTERES).trim();
+
+        if (!bio) return res.status(502).json({ error: 'La IA no devolvió texto. Probá de nuevo.' });
+
+        res.json({ descripcion: bio, caracteres: bio.length });
+    } catch (error) {
+        console.error('Error al generar bio con IA:', error.message);
+        res.status(500).json({ error: 'Error al generar la descripción con IA.' });
     }
 };

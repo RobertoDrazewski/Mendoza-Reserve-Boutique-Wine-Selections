@@ -212,6 +212,71 @@
     gap: 14px;
 }
 
+/* --- Foto a mano (subir archivo) en el formulario de edición de bodega --- */
+.admin-foto-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-foto-preview {
+    width: 96px;
+    height: 96px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f3ece2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ecdfc0;
+}
+
+.admin-foto-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-foto-preview-vacia {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #b3a898;
+    text-align: center;
+    padding: 0 8px;
+}
+
+.admin-foto-btn {
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* --- Descripción con IA: botón junto a la etiqueta + contador de caracteres --- */
+.admin-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.admin-label-row .btn-link-edit {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.75rem;
+}
+
+.admin-char-count {
+    align-self: flex-end;
+    font-size: 0.68rem;
+    color: #999;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
 /* --- Responsivo: en el celular la tabla se lee entera sin girar el
    teléfono. Cada fila pasa a ser una "tarjeta" apilada, con el nombre
    de columna (data-label) como etiqueta a la izquierda del valor —
@@ -352,5 +417,14 @@
 
     .admin-edit-grid {
         grid-template-columns: 1fr;
+    }
+
+    .admin-foto-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-label-row {
+        flex-wrap: wrap;
     }
 }
