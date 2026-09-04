@@ -1,30 +1,24 @@
 /* src/styles/Footer.css */
 
-/* El footer ya NO es "position: fixed" — vive en el flujo normal del layout
-   (.app-wrapper flex-column / .main-content flex:1, definido en App.css),
-   así que siempre queda al final de la página sin tapar contenido. */
-
 .footer {
     width: 100%;
     background: linear-gradient(180deg, #4a161d 0%, #3d1219 100%);
     color: #f3e9df;
-    /* Sin margin-top: en Home/Historia la imagen tiene que llegar justo hasta
-       acá, sin dejar ese filo crema de antes. */
     margin-top: 0;
 }
 
 .footer-top {
-    border-top: 3px solid #b8933a;
-    padding: 36px 32px 28px;
+    border-top: 2px solid #b8933a;
+    padding: 20px 32px;
 }
 
 .footer-container {
-    max-width: 700px;
+    max-width: 1100px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
+    grid-template-columns: 1.4fr 1fr 1fr;
     align-items: center;
-    gap: 28px;
+    gap: 24px;
 }
 
 .footer-col {
@@ -32,69 +26,73 @@
     flex-direction: column;
 }
 
-/* --- Columna de marca --- */
-.footer-brand {
-    flex-direction: row;
-    align-items: center;
-    gap: 14px;
+/* --- Columna de marca (Izquierda) --- */
+.footer-brand-col {
+    gap: 3px;
 }
 
-.footer-brand-mark {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
-    flex-shrink: 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+.footer-brand-title {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: baseline;
 }
 
 .footer-brand-name {
     font-family: 'Playfair Display', 'Georgia', serif;
-    font-size: 1.3rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #ffffff;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 .footer-brand-sub {
-    font-size: 0.68rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.8px;
     color: #c9a15a;
-    margin-bottom: 6px;
 }
 
 .footer-tagline {
-    font-size: 0.78rem;
-    line-height: 1.5;
+    font-size: 0.73rem;
+    line-height: 1.35;
     color: #d9c7bb;
-    max-width: 260px;
 }
 
-/* --- Columnas de contacto (Reino Unido / Argentina) --- */
+/* --- Columnas de contacto (Centro y Derecha) --- */
+.footer-center {
+    align-items: flex-start;
+}
+
+.footer-right {
+    align-items: flex-start;
+}
+
 .footer-contact-col {
-    gap: 6px;
+    gap: 2px;
 }
 
 .footer-contact-label {
-    font-size: 0.74rem;
+    font-size: 0.7rem;
     color: #d9c7bb;
 }
 
 .footer-contact-line {
     color: #ffffff;
+    text-router: none;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 0.88rem;
     font-weight: 600;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     display: inline-flex;
     align-items: center;
-    gap: 9px;
+    gap: 6px;
     transition: color 0.25s ease;
 }
 
 .footer-contact-line svg {
     color: #c9a15a;
-    font-size: 0.85rem;
+    font-size: 0.72rem;
 }
 
 .footer-contact-line:hover {
@@ -103,24 +101,24 @@
 
 /* --- Barra inferior --- */
 .footer-bottom {
-    border-top: 1px solid rgba(255,255,255,0.12);
+    border-top: 1px solid rgba(255,255,255,0.08);
     background-color: rgba(0,0,0,0.15);
 }
 
 .footer-bottom-inner {
-    max-width: 780px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 18px 32px;
+    padding: 10px 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
     flex-wrap: wrap;
 }
 
 .footer-copy {
-    font-size: 0.76rem;
-    line-height: 1.6;
+    font-size: 0.68rem;
+    line-height: 1.4;
     color: #c9b8ac;
 }
 
@@ -132,10 +130,10 @@
 .footer-puma-credit {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 8px;
+    padding: 3px 6px;
+    border-radius: 6px;
     transition: background-color 0.25s ease;
 }
 
@@ -144,59 +142,43 @@
 }
 
 .footer-designed-by {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     color: #a98f7c;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
 }
 
 .footer-puma-logo {
-    width: 30px;
-    height: 30px;
+    width: 22px;
+    height: 22px;
     object-fit: contain;
 }
 
 .footer-puma-name {
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: #e4c98a;
     letter-spacing: 0.3px;
 }
 
 /* --- Responsivo --- */
-@media (max-width: 700px) {
-    .footer-container {
-        grid-template-columns: 1fr 1fr;
-        gap: 24px 32px;
-    }
-    .footer-brand {
-        grid-column: 1 / -1;
-    }
-}
-
-@media (max-width: 600px) {
-    .footer-top {
-        padding: 36px 24px 28px;
-    }
+@media (max-width: 850px) {
     .footer-container {
         grid-template-columns: 1fr;
-        gap: 28px;
+        gap: 16px;
         text-align: center;
     }
-    .footer-brand {
-        flex-direction: column;
+    .footer-brand-col,
+    .footer-center,
+    .footer-right {
         align-items: center;
-        text-align: center;
     }
-    .footer-tagline {
-        max-width: none;
-    }
-    .footer-contact-col {
-        align-items: center;
+    .footer-brand-title {
+        justify-content: center;
     }
     .footer-bottom-inner {
         flex-direction: column;
         text-align: center;
-        padding: 18px 24px;
+        padding: 12px 24px;
     }
 }

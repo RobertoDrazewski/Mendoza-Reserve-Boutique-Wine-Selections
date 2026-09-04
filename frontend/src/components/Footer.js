@@ -9,6 +9,8 @@ const Footer = () => {
 
   const t = {
     es: {
+      brandName: 'Mendoza Reserve',
+      brandSub: 'Boutique Wine Selections',
       tagline: 'Bodegas boutique independientes de Mendoza, directo al mercado británico.',
       salesUK: 'Ventas — Reino Unido',
       salesAR: 'Ventas — Argentina (Mendoza)',
@@ -17,6 +19,8 @@ const Footer = () => {
       designedBy: 'Diseño y desarrollo por',
     },
     en: {
+      brandName: 'Mendoza Reserve',
+      brandSub: 'Boutique Wine Selections',
       tagline: 'Independent boutique wineries from Mendoza, direct to the UK market.',
       salesUK: 'Sales — United Kingdom',
       salesAR: 'Sales — Argentina (Mendoza)',
@@ -33,30 +37,25 @@ const Footer = () => {
       <div className="footer-top">
         <div className="footer-container">
 
-          {/* Marca */}
-          <div className="footer-col footer-brand">
-            <img
-              src="/images/icon-maskable-512x512.png"
-              alt="Mendoza Reserve"
-              className="footer-brand-mark"
-            />
-            <div>
-              <p className="footer-brand-name">Mendoza Reserve</p>
-              <p className="footer-brand-sub">Boutique Wine Selections</p>
-              <p className="footer-tagline">{c.tagline}</p>
-            </div>
+          {/* Izquierda: Marca */}
+          <div className="footer-col footer-brand-col">
+            <p className="footer-brand-title">
+              <span className="footer-brand-name">{c.brandName}</span>
+              <span className="footer-brand-sub">{c.brandSub}</span>
+            </p>
+            <p className="footer-tagline">{c.tagline}</p>
           </div>
 
-          {/* Ventas Reino Unido */}
-          <div className="footer-col footer-contact-col">
+          {/* Centro: Ventas Reino Unido */}
+          <div className="footer-col footer-contact-col footer-center">
             <span className="footer-contact-label">🇬🇧 {c.salesUK}</span>
             <a href="tel:+447562480662" className="footer-contact-line">
               <FaPhoneAlt /> +44 7562 480662
             </a>
           </div>
 
-          {/* Ventas Argentina (Mendoza) */}
-          <div className="footer-col footer-contact-col">
+          {/* Derecha: Ventas Argentina */}
+          <div className="footer-col footer-contact-col footer-right">
             <span className="footer-contact-label">🇦🇷 {c.salesAR}</span>
             <a href="tel:+542617730270" className="footer-contact-line">
               <FaPhoneAlt /> +54 261 773 0270
