@@ -206,3 +206,151 @@
     border: 1px solid #ddd;
     margin-bottom: 12px;
 }
+
+.admin-row-actions {
+    display: inline-flex;
+    gap: 14px;
+}
+
+/* --- Responsivo: en el celular la tabla se lee entera sin girar el
+   teléfono. Cada fila pasa a ser una "tarjeta" apilada, con el nombre
+   de columna (data-label) como etiqueta a la izquierda del valor —
+   así no hace falta scroll horizontal ni landscape. --- */
+@media (max-width: 920px) {
+    .admin-panel {
+        padding: 130px 14px 80px;
+    }
+
+    .admin-panel h1 {
+        font-size: 1.5rem;
+    }
+
+    .admin-tabs {
+        gap: 8px;
+    }
+
+    .admin-tabs button {
+        flex: 1 1 auto;
+        padding: 10px 12px;
+        font-size: 0.72rem;
+    }
+
+    .admin-tab-content {
+        padding: 14px;
+    }
+
+    .admin-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-toolbar input,
+    .admin-toolbar select,
+    .admin-toolbar button {
+        width: 100%;
+    }
+
+    .admin-count {
+        margin-left: 0;
+        text-align: center;
+    }
+
+    .admin-table-wrap {
+        overflow-x: visible;
+    }
+
+    .admin-table thead {
+        display: none;
+    }
+
+    .admin-table,
+    .admin-table tbody,
+    .admin-table tr,
+    .admin-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .admin-table tr {
+        margin-bottom: 14px;
+        border: 1px solid #ecdfc0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(61, 18, 25, 0.06);
+    }
+
+    .admin-table tr.admin-edit-row {
+        box-shadow: none;
+        border: none;
+        margin-bottom: 0;
+    }
+
+    /* Cada celda reserva una franja izquierda fija para su etiqueta
+       (position:absolute, fuera del flujo) y el valor ocupa el resto
+       en flujo normal de bloque — así el valor SIEMPRE puede achicarse
+       y hacer salto de línea con su propio ancho, sin el problema
+       clásico de flexbox donde un texto/select no se achica y termina
+       recortado por el borde redondeado de la tarjeta. */
+    .admin-table td {
+        position: relative;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 14px 10px 46%;
+        border-bottom: 1px solid #f3ece2;
+        text-align: right;
+        min-height: 38px;
+    }
+
+    .admin-table td:last-child {
+        border-bottom: none;
+    }
+
+    .admin-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 14px;
+        top: 10px;
+        width: calc(46% - 24px);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.64rem;
+        letter-spacing: 0.4px;
+        color: #a63a43;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .admin-table td select,
+    .admin-table td input,
+    .admin-table td button {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .admin-table td select {
+        width: 100%;
+        text-align: left;
+    }
+
+    .admin-row-actions {
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    /* Filas especiales (formulario de edición expandido, mensaje de
+       "sin resultados"): ocupan todo el ancho de la tarjeta, sin la
+       etiqueta a la izquierda. */
+    .admin-table td[colspan] {
+        padding: 16px 14px;
+        text-align: left;
+    }
+
+    .admin-table td[colspan]::before {
+        content: none;
+    }
+
+    .admin-edit-grid {
+        grid-template-columns: 1fr;
+    }
+}

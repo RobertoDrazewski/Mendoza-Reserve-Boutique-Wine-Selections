@@ -142,17 +142,17 @@ const AdminLeads = () => {
                         <tbody>
                             {leads.map((l) => (
                                 <tr key={l.id}>
-                                    <td>{l.negocio}</td>
-                                    <td>{l.nombre_contacto || '—'}</td>
-                                    <td>{l.tipo}</td>
-                                    <td className="admin-small">{l.email || '—'}<br />{l.telefono || ''}</td>
-                                    <td>{l.ciudad || '—'}</td>
-                                    <td>
+                                    <td data-label="Negocio">{l.negocio}</td>
+                                    <td data-label="Contacto">{l.nombre_contacto || '—'}</td>
+                                    <td data-label="Tipo">{l.tipo}</td>
+                                    <td className="admin-small" data-label="Email / Tel">{l.email || '—'}<br />{l.telefono || ''}</td>
+                                    <td data-label="Ciudad">{l.ciudad || '—'}</td>
+                                    <td data-label="Estado">
                                         <select value={l.estado} onChange={(e) => cambiarEstado(l.id, e.target.value)}>
                                             {ESTADOS.map((e) => <option key={e} value={e}>{e}</option>)}
                                         </select>
                                     </td>
-                                    <td><button className="btn-link-edit danger" onClick={() => eliminar(l.id)}>Eliminar</button></td>
+                                    <td data-label="Acciones"><button className="btn-link-edit danger" onClick={() => eliminar(l.id)}>Eliminar</button></td>
                                 </tr>
                             ))}
                             {leads.length === 0 && <tr><td colSpan={7}>Todavía no cargaste leads.</td></tr>}

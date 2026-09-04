@@ -76,22 +76,22 @@ const AdminOrders = () => {
                         <tbody>
                             {orders.map((o) => (
                                 <tr key={o.id}>
-                                    <td>{o.id}</td>
-                                    <td>{o.bodega_nombre}</td>
-                                    <td className="admin-small">{o.buyer_name}<br />{o.buyer_email}</td>
-                                    <td>{o.moneda} {Number(o.subtotal).toFixed(2)}</td>
-                                    <td>{o.moneda} {Number(o.comision_monto).toFixed(2)} ({o.comision_pct_aplicada}%)</td>
-                                    <td>
+                                    <td data-label="#">{o.id}</td>
+                                    <td data-label="Bodega">{o.bodega_nombre}</td>
+                                    <td className="admin-small" data-label="Comprador">{o.buyer_name}<br />{o.buyer_email}</td>
+                                    <td data-label="Subtotal">{o.moneda} {Number(o.subtotal).toFixed(2)}</td>
+                                    <td data-label="Comisión">{o.moneda} {Number(o.comision_monto).toFixed(2)} ({o.comision_pct_aplicada}%)</td>
+                                    <td data-label="Estado pedido">
                                         <select disabled={savingId === o.id} value={o.estado} onChange={(e) => actualizar(o.id, 'estado', e.target.value)}>
                                             {ESTADOS_ORDEN.map((e) => <option key={e} value={e}>{e}</option>)}
                                         </select>
                                     </td>
-                                    <td>
+                                    <td data-label="Estado comisión">
                                         <select disabled={savingId === o.id} value={o.comision_estado} onChange={(e) => actualizar(o.id, 'comision_estado', e.target.value)}>
                                             {ESTADOS_COMISION.map((e) => <option key={e} value={e}>{e}</option>)}
                                         </select>
                                     </td>
-                                    <td className="admin-small">{new Date(o.created_at).toLocaleDateString()}</td>
+                                    <td className="admin-small" data-label="Fecha">{new Date(o.created_at).toLocaleDateString()}</td>
                                 </tr>
                             ))}
                             {orders.length === 0 && <tr><td colSpan={8}>No hay pedidos todavía.</td></tr>}

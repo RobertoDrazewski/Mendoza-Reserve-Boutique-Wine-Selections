@@ -137,17 +137,19 @@ const AdminVinos = () => {
                         <tbody>
                             {vinos.map((v) => (
                                 <tr key={v.id}>
-                                    <td>{v.nombre}</td>
-                                    <td>{[v.varietal, v.cosecha].filter(Boolean).join(' · ') || '—'}</td>
-                                    <td>{v.formato}</td>
-                                    <td>{v.moneda} {Number(v.precio_unitario).toFixed(2)}</td>
-                                    <td>{v.stock}</td>
-                                    <td>
+                                    <td data-label="Nombre">{v.nombre}</td>
+                                    <td data-label="Varietal / Cosecha">{[v.varietal, v.cosecha].filter(Boolean).join(' · ') || '—'}</td>
+                                    <td data-label="Formato">{v.formato}</td>
+                                    <td data-label="Precio">{v.moneda} {Number(v.precio_unitario).toFixed(2)}</td>
+                                    <td data-label="Stock">{v.stock}</td>
+                                    <td data-label="Activo">
                                         <button className="btn-link-edit" onClick={() => toggleActivo(v)}>{v.activo ? 'Sí (pausar)' : 'No (activar)'}</button>
                                     </td>
-                                    <td>
-                                        <button className="btn-link-edit" onClick={() => startEdit(v)}>Editar</button>{' '}
-                                        <button className="btn-link-edit danger" onClick={() => eliminar(v.id)}>Eliminar</button>
+                                    <td data-label="Acciones">
+                                        <span className="admin-row-actions">
+                                            <button className="btn-link-edit" onClick={() => startEdit(v)}>Editar</button>
+                                            <button className="btn-link-edit danger" onClick={() => eliminar(v.id)}>Eliminar</button>
+                                        </span>
                                     </td>
                                 </tr>
                             ))}

@@ -93,11 +93,11 @@ const AdminBodegas = () => {
                             {visibles.map((b) => (
                                 <React.Fragment key={b.id}>
                                     <tr>
-                                        <td>{b.nombre}</td>
-                                        <td>{b.zona || '—'}</td>
-                                        <td className="admin-small">{b.telefono || '—'}<br />{b.sitio_web ? <a href={b.sitio_web} target="_blank" rel="noreferrer">web</a> : '—'}</td>
-                                        <td>{b.comision_pct}%</td>
-                                        <td>
+                                        <td data-label="Nombre">{b.nombre}</td>
+                                        <td data-label="Zona">{b.zona || '—'}</td>
+                                        <td className="admin-small" data-label="Tel / Web">{b.telefono || '—'}<br />{b.sitio_web ? <a href={b.sitio_web} target="_blank" rel="noreferrer">web</a> : '—'}</td>
+                                        <td data-label="Comisión %">{b.comision_pct}%</td>
+                                        <td data-label="Estado">
                                             <select
                                                 value={b.estado}
                                                 disabled={savingId === b.id}
@@ -106,7 +106,7 @@ const AdminBodegas = () => {
                                                 {ESTADOS.map((e) => <option key={e} value={e}>{e}</option>)}
                                             </select>
                                         </td>
-                                        <td>
+                                        <td data-label="Acciones">
                                             <button className="btn-link-edit" onClick={() => (editId === b.id ? setEditId(null) : openEdit(b))}>
                                                 {editId === b.id ? 'Cerrar' : 'Editar'}
                                             </button>
