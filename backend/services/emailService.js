@@ -7,6 +7,10 @@ const { Resend } = require('resend');
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Mendoza Reserve <pedidos@mendoza-reserve.co.uk>';
 const SITE_URL = process.env.SITE_URL || 'https://mendoza-reserve.co.uk';
+// Casilla interna de Roberto: recibe el formulario de contacto y el aviso de
+// cada nueva consulta por el chat de IA. Si no está seteada, esos dos avisos
+// simplemente no se mandan (el resto de los emails del ciclo de pedido no dependen de esto).
+const ADMIN_NOTIFY_EMAIL = process.env.ADMIN_NOTIFY_EMAIL || null;
 
 async function enviarEmail({ to, subject, html }) {
     if (!resend) {
@@ -14,7 +18,16 @@ async function enviarEmail({ to, subject, html }) {
         return { simulated: true };
     }
     try {
-        const result = await resend.emails.send({ from: EMAIL_FROM, to, subject, html });
+        // "pedidos@mendoza-reserve.co.uk" es sólo el remitente — no es una casilla real que
+        // alguien lea. Si una bodega o un comprador le da "Responder" a un email, que ese
+        // reply llegue de verdad a tu Gmail en vez de perderse.
+        const result = await resend.emails.send({
+            from: EMAIL_FROM,
+            to,
+            subject,
+            html,
+            ...(ADMIN_NOTIFY_EMAIL ? { replyTo: ADMIN_NOTIFY_EMAIL } : {})
+        });
         return result;
     } catch (error) {
         // Un fallo de email nunca debe tumbar la operación principal (crear orden, etc.)
@@ -113,9 +126,46 @@ async function emailActualizacionEnvio({ buyerEmail, buyerName, bodegaNombre, sh
     return enviarEmail({ to: buyerEmail, subject: `Actualización de envío — ${bodegaNombre}`, html });
 }
 
+// 5. Aviso interno a Roberto: alguien mandó el formulario de contacto.
+async function emailNuevaConsultaContacto({ nombre, email, asunto, mensaje }) {
+    if (!ADMIN_NOTIFY_EMAIL) return;
+    const html = layoutBase(`
+        <h2 style="color:#a63a43;font-family:Georgia,serif;">Nueva consulta por el formulario de contacto</h2>
+        <p><strong>Nombre:</strong> ${nombre}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        ${asunto ? `<p><strong>Asunto:</strong> ${asunto}</p>` : ''}
+        <p><strong>Mensaje:</strong></p>
+        <p style="white-space:pre-wrap;background:#f4f1ea;padding:12px;border-left:3px solid #d4af37;">${mensaje}</p>
+        <p style="font-size:0.8rem;color:#777;">Podés responderle directamente a ${email}.</p>
+    `);
+    return enviarEmail({ to: ADMIN_NOTIFY_EMAIL, subject: `Nueva consulta de contacto — ${nombre}`, html });
+}
+
+// 6. Aviso interno a Roberto: alguien empezó a usar el chat de IA de seguimiento de pedido
+// (se manda una sola vez, en el primer mensaje de cada conversación, para no inundar la casilla).
+async function emailNuevoChatCliente({ cartGroupId, email, mensajeCliente, respuestaIA }) {
+    if (!ADMIN_NOTIFY_EMAIL) return;
+    const trackingUrl = `${SITE_URL}/seguimiento/${cartGroupId}?email=${encodeURIComponent(email)}`;
+    const html = layoutBase(`
+        <h2 style="color:#a63a43;font-family:Georgia,serif;">Alguien está consultando el chat de pedido</h2>
+        <p><strong>Email del comprador:</strong> ${email}</p>
+        <p><strong>Código de pedido:</strong> ${cartGroupId}</p>
+        <p><strong>Primer mensaje del comprador:</strong></p>
+        <p style="white-space:pre-wrap;background:#f4f1ea;padding:12px;border-left:3px solid #d4af37;">${mensajeCliente}</p>
+        <p><strong>Respuesta del asistente:</strong></p>
+        <p style="white-space:pre-wrap;background:#f4f1ea;padding:12px;border-left:3px solid #a63a43;">${respuestaIA}</p>
+        <p style="text-align:center;margin:25px 0;">
+          <a href="${trackingUrl}" style="background:#a63a43;color:#fff;padding:14px 28px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;">Ver este pedido</a>
+        </p>
+    `);
+    return enviarEmail({ to: ADMIN_NOTIFY_EMAIL, subject: `Nueva consulta por chat — pedido ${cartGroupId}`, html });
+}
+
 module.exports = {
     emailNuevaOrdenBodega,
     emailConfirmacionComprador,
     emailRespuestaBodega,
-    emailActualizacionEnvio
+    emailActualizacionEnvio,
+    emailNuevaConsultaContacto,
+    emailNuevoChatCliente
 };

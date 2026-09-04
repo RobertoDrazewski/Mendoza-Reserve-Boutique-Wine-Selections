@@ -12,7 +12,7 @@ const AdminOrders = () => {
     const [savingId, setSavingId] = useState(null);
     const [msg, setMsg] = useState(null);
 
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
+    const API_URL = process.env.REACT_APP_API_URL || '/api';
 
     const fetchOrders = useCallback(async () => {
         setLoading(true);

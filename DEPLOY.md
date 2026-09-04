@@ -6,7 +6,7 @@ Esta guía te lleva paso a paso para poner el sitio en producción con:
 - **Railway** → hosting de la app (backend + frontend en un solo servicio)
 - **Cloudflare** → DNS del dominio `mendoza-reserve.co.uk` (que ya tenés)
 - **Resend** (opcional, recomendado) → envío de emails automáticos
-- **Anthropic** (opcional) → chat con IA de seguimiento de pedido
+- **OpenAI** (opcional) → chat con IA de seguimiento de pedido
 
 Podés hacer todo esto vos mismo siguiendo cada paso. No hace falta tocar código: sólo copiar/pegar valores en cada panel.
 
@@ -39,28 +39,68 @@ Necesitás:
 
    **Guardá estos 5 valores** — los vas a necesitar en el paso 3 (Railway).
 
-8. Cargá el esquema y los datos. Tenés dos formas:
+   > Tus datos reales de conexión (Aiven, servicio `mysql-309d8fa4-drazewski-d6b4`):
+   > `HOST=mysql-309d8fa4-drazewski-d6b4.l.aivencloud.com`, `PORT=25819`, `USER=avnadmin`.
+   > Ya están cargados en `backend/.env` de este proyecto.
+
+   **Importante — la base `mendoza_bodegas` todavía no existe.** Un servicio de Aiven MySQL viene
+   solo con la base `defaultdb` creada por defecto; `mendoza_bodegas` (el nombre que vas a usar,
+   ya seteado en `backend/.env`) hay que crearla antes de cargar el esquema. Dos formas:
+   - **Desde la consola de Aiven**: pestaña **Databases** del servicio → **Create database** →
+     nombre `mendoza_bodegas`.
+   - **Desde la terminal**, conectándote a `defaultdb` primero:
+     ```bash
+     mysql --host=mysql-309d8fa4-drazewski-d6b4.l.aivencloud.com --port=25819 --user=avnadmin -p \
+       --database=defaultdb --ssl --default-character-set=utf8mb4 \
+       -e "CREATE DATABASE IF NOT EXISTS mendoza_bodegas CHARACTER SET utf8mb4;"
+     ```
+     (usá `--ssl-mode=REQUIRED` en vez de `--ssl` si tu cliente es MySQL oficial y no MariaDB — ver más abajo).
+
+9. Cargá el esquema y los datos en `mendoza_bodegas`. Tenés dos formas:
 
    **Opción A — con MySQL Workbench / TablePlus / DBeaver (recomendado si no usás la terminal):**
-   Conectate al servicio con esos 5 datos (con SSL activado) y ejecutá, en este orden, el contenido de:
+   Conectate al servicio con esos 5 datos (con SSL activado, base `mendoza_bodegas`) y ejecutá, en
+   este orden, el contenido de:
    - `backend/sql/schema.sql`
    - `backend/sql/seed_bodegas.sql`
    - `backend/sql/update_bodega_images.sql`
 
-   **Opción B — con la terminal**, si tenés `mysql` client instalado:
+   **Opción B — con la terminal**, si tenés `mysql` client instalado. Primero revisá qué cliente tenés
+   (`mysql --version`): si dice **MariaDB**, el flag de SSL es `--ssl` en vez de `--ssl-mode=REQUIRED`.
+
+   Con cliente **MySQL** oficial:
    ```bash
-   mysql --host=<HOST> --port=<PORT> --user=<USER> -p --database=<DATABASE> \
-     --ssl-mode=REQUIRED --default-character-set=utf8mb4 < backend/sql/schema.sql
+   mysql --host=mysql-309d8fa4-drazewski-d6b4.l.aivencloud.com --port=25819 --user=avnadmin -p \
+     --database=mendoza_bodegas --ssl-mode=REQUIRED --default-character-set=utf8mb4 < backend/sql/schema.sql
 
-   mysql --host=<HOST> --port=<PORT> --user=<USER> -p --database=<DATABASE> \
-     --ssl-mode=REQUIRED --default-character-set=utf8mb4 < backend/sql/seed_bodegas.sql
+   mysql --host=mysql-309d8fa4-drazewski-d6b4.l.aivencloud.com --port=25819 --user=avnadmin -p \
+     --database=mendoza_bodegas --ssl-mode=REQUIRED --default-character-set=utf8mb4 < backend/sql/seed_bodegas.sql
 
-   mysql --host=<HOST> --port=<PORT> --user=<USER> -p --database=<DATABASE> \
-     --ssl-mode=REQUIRED --default-character-set=utf8mb4 < backend/sql/update_bodega_images.sql
+   mysql --host=mysql-309d8fa4-drazewski-d6b4.l.aivencloud.com --port=25819 --user=avnadmin -p \
+     --database=mendoza_bodegas --ssl-mode=REQUIRED --default-character-set=utf8mb4 < backend/sql/update_bodega_images.sql
    ```
+
+   Con cliente **MariaDB** (por ejemplo si lo instalaste con `brew install mariadb` en Mac):
+   ```bash
+   mysql --host=mysql-309d8fa4-drazewski-d6b4.l.aivencloud.com --port=25819 --user=avnadmin -p \
+     --database=mendoza_bodegas --ssl --default-character-set=utf8mb4 < backend/sql/schema.sql
+
+   mysql --host=mysql-309d8fa4-drazewski-d6b4.l.aivencloud.com --port=25819 --user=avnadmin -p \
+     --database=mendoza_bodegas --ssl --default-character-set=utf8mb4 < backend/sql/seed_bodegas.sql
+
+   mysql --host=mysql-309d8fa4-drazewski-d6b4.l.aivencloud.com --port=25819 --user=avnadmin -p \
+     --database=mendoza_bodegas --ssl --default-character-set=utf8mb4 < backend/sql/update_bodega_images.sql
+   ```
+   La contraseña (`-p` te la va a pedir interactivamente) es la que ya está en `backend/.env`.
+
    **Importante**: usá siempre `--default-character-set=utf8mb4` (o el equivalente en tu cliente gráfico) — si no, los nombres con tildes ("Luján de Cuyo", etc.) se guardan mal.
 
-9. Verificá que cargó bien: `SELECT COUNT(*) FROM bodegas;` debería devolver **144**.
+10. Verificá que cargó bien: `SELECT COUNT(*) FROM bodegas;` debería devolver **144**.
+
+   > **Nota:** esta sesión no tiene salida de red hacia el puerto de Aiven (25819), así que no pude
+   > ejecutar este paso por vos. `backend/.env` en este workspace ya tiene cargados los 5 datos de
+   > conexión de tu base real (los que me pasaste), así que solo te falta correr estos 3 comandos
+   > una vez desde tu propia máquina (o pegar el contenido de los 3 archivos `.sql` en TablePlus/DBeaver).
 
 Las 144 bodegas entran con estado `pendiente_contacto` (no se muestran en el sitio todavía). Las vas a ir activando desde el panel de administración a medida que te confirmen que quieren participar.
 
@@ -104,8 +144,9 @@ Sin esto, el sitio funciona igual, pero los emails a las bodegas y a los comprad
    | `SITE_URL` | `https://mendoza-reserve.co.uk` (el dominio final, para los links de los emails) |
    | `RESEND_API_KEY` | tu API key de Resend (paso 2) — dejalo vacío si todavía no configuraste Resend |
    | `EMAIL_FROM` | `Mendoza Reserve <pedidos@mendoza-reserve.co.uk>` |
-   | `ANTHROPIC_API_KEY` | tu API key de [console.anthropic.com](https://console.anthropic.com) — dejalo vacío si todavía no querés activar el chat |
-   | `ANTHROPIC_MODEL` | `claude-haiku-4-5-20251001` (podés revisar modelos actuales en [docs.claude.com](https://docs.claude.com/en/docs/about-claude/models)) |
+   | `OPENAI_API_KEY` | tu API key de [platform.openai.com/api-keys](https://platform.openai.com/api-keys) — dejalo vacío si todavía no querés activar el chat |
+   | `OPENAI_MODEL` | `gpt-5.6-luna` (podés revisar modelos actuales en [developers.openai.com/api/docs/models](https://developers.openai.com/api/docs/models)) |
+   | `ADMIN_NOTIFY_EMAIL` | `mendozareserve@gmail.com` — recibe el formulario de contacto y el aviso de nuevas consultas por chat |
    | `EXTRA_CORS_ORIGIN` | dejalo vacío por ahora (ver nota abajo) |
 
    **Nota sobre CORS**: el sitio sirve el frontend y la API desde el mismo servicio/dominio, así que no hace falta agregar nada especial en `EXTRA_CORS_ORIGIN` para que funcione — sólo la usarías si en el futuro separás el frontend a otro dominio.
@@ -157,7 +198,7 @@ Una vez que todo esté conectado, probá en orden:
 - [ ] Hacés un pedido de prueba (con otro usuario comprador) y llega a `/seguimiento/...`.
 - [ ] Si configuraste Resend: te llega el email a la casilla de la bodega (usá tu propio email como email de prueba de la bodega antes de activarla de verdad).
 - [ ] El link del email `/bodega/pedido/:token` te deja confirmar el pedido.
-- [ ] Si configuraste Anthropic: el chat de `/seguimiento` responde preguntas sobre el pedido.
+- [ ] Si configuraste OpenAI: el chat de `/seguimiento` responde preguntas sobre el pedido.
 
 ---
 
@@ -174,4 +215,4 @@ Una vez que todo esté conectado, probá en orden:
 
 Cualquier cambio que subas a la rama `main` de GitHub, Railway lo redeploya automáticamente (build + start, como configuraste en el paso 3). No hace falta tocar nada más.
 
-Si en algún momento cambiás el modelo del chat con IA (por ejemplo porque Anthropic lanza uno nuevo), sólo actualizá la variable `ANTHROPIC_MODEL` en Railway — no hace falta tocar código.
+Si en algún momento cambiás el modelo del chat con IA (por ejemplo porque OpenAI lanza uno nuevo), sólo actualizá la variable `OPENAI_MODEL` en Railway — no hace falta tocar código.

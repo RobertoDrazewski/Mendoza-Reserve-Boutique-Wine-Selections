@@ -45,7 +45,7 @@ const Contacto = () => {
     setStatus({ type: 'loading', msg: currentT.sending });
 
     // ✅ USAMOS LA URL DINÁMICA QUE FUNCIONA EN TUS OTROS COMPONENTES
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
+    const API_URL = process.env.REACT_APP_API_URL || '/api';
 
     try {
       const response = await fetch(`${API_URL}/contacto`, {

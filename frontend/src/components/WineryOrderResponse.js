@@ -15,7 +15,7 @@ const WineryOrderResponse = () => {
     const [resultado, setResultado] = useState(null);
     const [enviando, setEnviando] = useState(false);
 
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
+    const API_URL = process.env.REACT_APP_API_URL || '/api';
 
     useEffect(() => {
         const fetchOrder = async () => {

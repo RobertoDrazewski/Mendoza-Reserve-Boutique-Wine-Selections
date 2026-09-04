@@ -1,13 +1,14 @@
-const Anthropic = require('@anthropic-ai/sdk');
+const OpenAI = require('openai');
 const db = require('../config/db');
+const { emailNuevoChatCliente } = require('../services/emailService');
 
 // Este chat es un asistente ACOTADO: sólo puede consultar el pedido puntual
 // (cart_group_id + email) que ya se verificó en la página de seguimiento —
 // nunca tiene acceso libre a la base de datos ni a pedidos de otra persona.
-// Requiere que Roberto configure su propia ANTHROPIC_API_KEY para el SaaS
-// (independiente de cualquier sesión de Claude Code).
-const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }) : null;
-const MODEL = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
+// Requiere que Roberto configure su propia OPENAI_API_KEY para el SaaS
+// (independiente de cualquier otra integración).
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+const MODEL = process.env.OPENAI_MODEL || 'gpt-5.6-luna';
 
 async function buscarPedido(cartGroupId, email) {
     const [orders] = await db.query(
@@ -32,15 +33,18 @@ async function buscarPedido(cartGroupId, email) {
 
 const tools = [
     {
-        name: 'get_order_status',
-        description: 'Devuelve el estado actual, los vinos pedidos y los datos de envío del pedido del comprador de esta conversación. No recibe parámetros: siempre consulta el pedido ya identificado en este chat (nunca otro).',
-        input_schema: { type: 'object', properties: {}, required: [] }
+        type: 'function',
+        function: {
+            name: 'get_order_status',
+            description: 'Devuelve el estado actual, los vinos pedidos y los datos de envío del pedido del comprador de esta conversación. No recibe parámetros: siempre consulta el pedido ya identificado en este chat (nunca otro).',
+            parameters: { type: 'object', properties: {}, required: [] }
+        }
     }
 ];
 
 exports.chatOrderStatus = async (req, res) => {
-    if (!anthropic) {
-        return res.status(503).json({ error: 'El chat con IA todavía no está configurado (falta ANTHROPIC_API_KEY en el servidor).' });
+    if (!openai) {
+        return res.status(503).json({ error: 'El chat con IA todavía no está configurado (falta OPENAI_API_KEY en el servidor).' });
     }
 
     const { cartGroupId, email, message, history } = req.body;
@@ -59,36 +63,53 @@ Si preguntan algo que no tiene que ver con este pedido (otras bodegas, otros ped
 
     try {
         const messages = [
+            { role: 'system', content: systemPrompt },
             ...(Array.isArray(history) ? history.slice(-10).map((h) => ({ role: h.role, content: h.content })) : []),
             { role: 'user', content: message }
         ];
 
-        let response = await anthropic.messages.create({
-            model: MODEL, max_tokens: 500, system: systemPrompt, tools, messages
+        let response = await openai.chat.completions.create({
+            model: MODEL, max_tokens: 500, tools, messages
         });
+        let choice = response.choices[0];
 
         let safety = 0;
-        while (response.stop_reason === 'tool_use' && safety < 3) {
+        while (choice.finish_reason === 'tool_calls' && safety < 3) {
             safety += 1;
-            const toolUse = response.content.find((c) => c.type === 'tool_use');
-            if (!toolUse) break;
+            const toolCalls = choice.message.tool_calls || [];
+            if (toolCalls.length === 0) break;
 
             const orders = await buscarPedido(cartGroupId, email);
             const toolResultContent = orders.length > 0 ? orders : { error: 'No se encontró ningún pedido con ese código y email.' };
 
-            messages.push({ role: 'assistant', content: response.content });
-            messages.push({
-                role: 'user',
-                content: [{ type: 'tool_result', tool_use_id: toolUse.id, content: JSON.stringify(toolResultContent) }]
-            });
+            messages.push(choice.message);
+            for (const toolCall of toolCalls) {
+                messages.push({
+                    role: 'tool',
+                    tool_call_id: toolCall.id,
+                    content: JSON.stringify(toolResultContent)
+                });
+            }
 
-            response = await anthropic.messages.create({
-                model: MODEL, max_tokens: 500, system: systemPrompt, tools, messages
+            response = await openai.chat.completions.create({
+                model: MODEL, max_tokens: 500, tools, messages
             });
+            choice = response.choices[0];
         }
 
-        const textBlock = response.content.find((c) => c.type === 'text');
-        res.json({ reply: textBlock ? textBlock.text : 'No tengo una respuesta en este momento, probá de nuevo en un rato.' });
+        const reply = choice.message.content || 'No tengo una respuesta en este momento, probá de nuevo en un rato.';
+        res.json({ reply });
+
+        // Aviso interno a Roberto sólo en el primer mensaje de la conversación (para saber
+        // que alguien está consultando, sin inundarle la casilla en cada ida y vuelta del chat).
+        const mensajesDeUsuario = Array.isArray(history) ? history.filter((h) => h.role === 'user').length : 1;
+        if (mensajesDeUsuario <= 1) {
+            try {
+                await emailNuevoChatCliente({ cartGroupId, email, mensajeCliente: message, respuestaIA: reply });
+            } catch (emailError) {
+                console.error('Error enviando aviso de nuevo chat:', emailError.message);
+            }
+        }
     } catch (error) {
         console.error('Error en chatOrderStatus:', error.message);
         res.status(500).json({ error: 'Error al procesar el mensaje del chat' });

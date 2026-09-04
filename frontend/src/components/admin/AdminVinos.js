@@ -14,7 +14,7 @@ const AdminVinos = () => {
     const [showNew, setShowNew] = useState(false);
     const [msg, setMsg] = useState(null);
 
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
+    const API_URL = process.env.REACT_APP_API_URL || '/api';
 
     useEffect(() => {
         axios.get(`${API_URL}/bodegas/admin`).then((res) => {
