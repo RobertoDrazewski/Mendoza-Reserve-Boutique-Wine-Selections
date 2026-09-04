@@ -33,6 +33,25 @@ exports.getAllBodegas = async (req, res) => {
     }
 };
 
+// 1b. Listado PÚBLICO para el mapa por zona: TODAS las bodegas de la base
+// (no sólo las activas), pero con datos mínimos y sin contacto interno
+// (email/teléfono/whatsapp/notas quedan afuera) — así se puede mostrar la
+// red completa de bodegas de Mendoza sin exponer datos de negociación de
+// las que todavía están en 'pendiente_contacto'/'contactada'.
+exports.getBodegasParaMapa = async (req, res) => {
+    try {
+        const [rows] = await db.query(
+            `SELECT id, nombre, slug, zona, subzona, imagen, estado
+             FROM bodegas
+             ORDER BY zona ASC, subzona ASC, nombre ASC`
+        );
+        res.json(rows);
+    } catch (error) {
+        console.error('Error en getBodegasParaMapa:', error.message);
+        res.status(500).json({ error: 'Error al obtener bodegas para el mapa' });
+    }
+};
+
 // 2. Listado ADMIN: todas las bodegas, con filtro opcional ?estado=
 exports.getAllBodegasAdmin = async (req, res) => {
     try {

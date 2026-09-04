@@ -17,19 +17,19 @@ const Navbar = () => {
     // flota transparente sobre la imagen, sin filo blanco. En el resto —
     // Login, Registro, Carrito, Admin — el fondo es claro y liso, así que
     // ahí el navbar necesita su propio fondo sólido para leerse bien.
-    const heroPaths = ['/', '/historia', '/bodegas', '/vinos', '/contacto', '/seguimiento'];
+    const heroPaths = ['/', '/historia', '/bodegas', '/vinos', '/contacto', '/seguimiento', '/mapa'];
     const isHeroPage = heroPaths.some((p) => (p === '/' ? location.pathname === '/' : location.pathname.startsWith(p)));
 
     const t = {
         es: {
             home: "Inicio", bodegas: "Bodegas", vinos: "Vinos", historia: "Historia",
             contacto: "Contacto", login: "Ingresar", registro: "Registro",
-            logout: "Salir", welcome: "Hola", seguimiento: "Mi pedido", admin: "Admin"
+            logout: "Salir", welcome: "Hola", seguimiento: "Mi pedido", admin: "Admin", mapa: "Mapa"
         },
         en: {
             home: "Home", bodegas: "Wineries", vinos: "Wines", historia: "Our Story",
             contacto: "Contact", login: "Login", registro: "Register",
-            logout: "Logout", welcome: "Hi", seguimiento: "Track order", admin: "Admin"
+            logout: "Logout", welcome: "Hi", seguimiento: "Track order", admin: "Admin", mapa: "Map"
         }
     };
 
@@ -52,6 +52,7 @@ const Navbar = () => {
                         <NavLink to="/" end className={({ isActive }) => isActive ? "active" : ""}>{currentT.home}</NavLink>
                         <NavLink to="/bodegas" className={({ isActive }) => isActive ? "active" : ""}>{currentT.bodegas}</NavLink>
                         <NavLink to="/vinos" className={({ isActive }) => isActive ? "active" : ""}>{currentT.vinos}</NavLink>
+                        <NavLink to="/mapa" className={({ isActive }) => isActive ? "active" : ""}>{currentT.mapa}</NavLink>
                         <NavLink to="/historia" className={({ isActive }) => isActive ? "active" : ""}>{currentT.historia}</NavLink>
                         <NavLink to="/contacto" className={({ isActive }) => isActive ? "active" : ""}>{currentT.contacto}</NavLink>
                         <NavLink to="/seguimiento" className={({ isActive }) => isActive ? "active" : ""}>{currentT.seguimiento}</NavLink>

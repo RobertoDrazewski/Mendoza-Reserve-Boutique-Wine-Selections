@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import BodegasLista from './components/BodegasLista';
 import BodegaDetalle from './components/BodegaDetalle';
+import MapaBodegas from './components/MapaBodegas';
 import Vinos from './components/Vinos';
 import Historia from './components/Historia';
 import Contacto from './components/Contacto';
@@ -37,6 +38,7 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/bodegas" element={<BodegasLista />} />
                   <Route path="/bodega/:id" element={<BodegaDetalle />} />
+                  <Route path="/mapa" element={<MapaBodegas />} />
                   <Route path="/vinos" element={<Vinos />} />
                   <Route path="/historia" element={<Historia />} />
                   <Route path="/contacto" element={<Contacto />} />

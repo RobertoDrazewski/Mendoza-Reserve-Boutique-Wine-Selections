@@ -16,6 +16,9 @@ router.post('/:id/generar-bio', [verificarToken, esAdmin], bodegaController.gene
 
 // --- RUTAS PÚBLICAS ---
 // Cualquier usuario (logueado o no) puede ver el listado (sólo activas) y el detalle
+// '/mapa' va antes que '/:id' para no chocar con el parámetro (si no, "mapa" se
+// interpretaría como un slug de bodega).
+router.get('/mapa', bodegaController.getBodegasParaMapa);
 router.get('/', bodegaController.getAllBodegas);
 router.get('/:id', bodegaController.getBodegaById);
 
