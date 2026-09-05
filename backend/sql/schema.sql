@@ -56,7 +56,8 @@ CREATE TABLE IF NOT EXISTS bodegas (
     whatsapp        VARCHAR(60),
     email           VARCHAR(150),
     sitio_web       VARCHAR(255),
-    descripcion     TEXT,                       -- texto largo para la ficha de bodega
+    descripcion     TEXT,                       -- texto largo para la ficha de bodega (español)
+    descripcion_en  TEXT,                       -- misma bio, traducida al inglés británico
     logo_url        VARCHAR(255),
     imagen          VARCHAR(255),                -- imagen de portada (compat con frontend existente)
     comision_pct    DECIMAL(5,2) NOT NULL DEFAULT 12.00,

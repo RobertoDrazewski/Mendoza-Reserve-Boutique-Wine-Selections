@@ -106,7 +106,9 @@ const BodegasLista = () => {
                 <p className="bodegas-empty">{currentT.empty}</p>
             ) : (
                 <div className="bodegas-grid">
-                    {visibles.map((item) => (
+                    {visibles.map((item) => {
+                        const bio = lang === 'en' ? (item.descripcion_en || item.descripcion) : item.descripcion;
+                        return (
                         <div key={item.id} className="bodega-card">
                             <div className="bodega-image-wrapper">
                                 {item.imagen ? (
@@ -128,7 +130,7 @@ const BodegasLista = () => {
                             <div className="card-content">
                                 <h3 className="bodega-name">{item.nombre}</h3>
                                 {item.zona && <p className="bodega-zona">{item.zona}{item.subzona ? ` · ${item.subzona}` : ''}</p>}
-                                {item.descripcion && <p className="bodega-bio-snippet">{item.descripcion}</p>}
+                                {bio && <p className="bodega-bio-snippet">{bio}</p>}
                                 <div className="contact-details">
                                     {item.telefono && <p><strong>{currentT.phone}</strong> {item.telefono}</p>}
                                     {item.direccion && <p><strong>{currentT.address}</strong> {item.direccion}</p>}
@@ -138,7 +140,8 @@ const BodegasLista = () => {
                                 </Link>
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
             </div>

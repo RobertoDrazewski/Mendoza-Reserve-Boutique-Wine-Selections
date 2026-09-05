@@ -51,7 +51,8 @@ const AdminBodegas = () => {
         setEditForm({
             email: bodega.email || '', telefono: bodega.telefono || '', whatsapp: bodega.whatsapp || '',
             sitio_web: bodega.sitio_web || '', comision_pct: bodega.comision_pct || 12,
-            descripcion: bodega.descripcion || '', logo_url: bodega.logo_url || '', imagen: bodega.imagen || '',
+            descripcion: bodega.descripcion || '', descripcion_en: bodega.descripcion_en || '',
+            logo_url: bodega.logo_url || '', imagen: bodega.imagen || '',
             contacto_nombre: bodega.contacto_nombre || '', notas: bodega.notas || ''
         });
     };
@@ -93,8 +94,8 @@ const AdminBodegas = () => {
         setGenerandoId(id);
         try {
             const res = await axios.post(`${API_URL}/bodegas/${id}/generar-bio`);
-            setEditForm((prev) => ({ ...prev, descripcion: res.data.descripcion }));
-            setMsg({ type: 'ok', text: 'Descripción generada — revisala y guardá los cambios para publicarla.' });
+            setEditForm((prev) => ({ ...prev, descripcion: res.data.descripcion, descripcion_en: res.data.descripcion_en || prev.descripcion_en }));
+            setMsg({ type: 'ok', text: res.data.descripcion_en ? 'Descripción generada en español e inglés — revisalas y guardá los cambios para publicarlas.' : 'Descripción generada en español — la versión en inglés no se pudo generar, completala a mano si querés.' });
         } catch (err) {
             setMsg({ type: 'error', text: err.response?.data?.error || 'Error al generar la descripción.' });
         } finally {
@@ -189,14 +190,14 @@ const AdminBodegas = () => {
                                                     <label>Imagen (archivo en /images o URL completa)<input value={editForm.imagen} onChange={(e) => setEditForm({ ...editForm, imagen: e.target.value })} /></label>
                                                     <label className="full">
                                                         <span className="admin-label-row">
-                                                            Descripción
+                                                            Descripción (Español)
                                                             <button
                                                                 type="button"
                                                                 className="btn-link-edit"
                                                                 disabled={generandoId === b.id}
                                                                 onClick={() => generarBio(b.id)}
                                                             >
-                                                                {generandoId === b.id ? 'Generando...' : '✨ Generar con IA'}
+                                                                {generandoId === b.id ? 'Generando...' : '✨ Generar con IA (ES + EN)'}
                                                             </button>
                                                         </span>
                                                         <textarea
@@ -206,6 +207,19 @@ const AdminBodegas = () => {
                                                             onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })}
                                                         />
                                                         <span className="admin-char-count">{(editForm.descripcion || '').length} / {DESCRIPCION_MAX}</span>
+                                                    </label>
+                                                    <label className="full">
+                                                        <span className="admin-label-row">
+                                                            Descripción (English)
+                                                        </span>
+                                                        <textarea
+                                                            rows={4}
+                                                            maxLength={DESCRIPCION_MAX}
+                                                            placeholder="Se completa junto con la de arriba al usar 'Generar con IA', o escribila / corregila a mano."
+                                                            value={editForm.descripcion_en}
+                                                            onChange={(e) => setEditForm({ ...editForm, descripcion_en: e.target.value })}
+                                                        />
+                                                        <span className="admin-char-count">{(editForm.descripcion_en || '').length} / {DESCRIPCION_MAX}</span>
                                                     </label>
                                                     <label className="full">Notas internas<textarea rows={2} value={editForm.notas} onChange={(e) => setEditForm({ ...editForm, notas: e.target.value })} /></label>
                                                 </div>

@@ -17,7 +17,7 @@ function slugify(nombre) {
 
 const CAMPOS_PUBLICOS = `
     id, nombre, slug, zona, subzona, direccion, telefono, whatsapp, email,
-    sitio_web, descripcion, logo_url, imagen, estado, fecha_alta
+    sitio_web, descripcion, descripcion_en, logo_url, imagen, estado, fecha_alta
 `;
 
 // 1. Listado PÚBLICO: sólo bodegas activas (lo que ve el comprador en UK)
@@ -98,7 +98,7 @@ exports.getBodegaById = async (req, res) => {
 exports.createBodega = async (req, res) => {
     const {
         nombre, zona, subzona, direccion, telefono, whatsapp, email, sitio_web,
-        descripcion, logo_url, imagen, comision_pct, estado, contacto_nombre, notas
+        descripcion, descripcion_en, logo_url, imagen, comision_pct, estado, contacto_nombre, notas
     } = req.body;
 
     if (!nombre) return res.status(400).json({ error: 'El nombre es obligatorio' });
@@ -111,12 +111,12 @@ exports.createBodega = async (req, res) => {
         const [result] = await db.query(
             `INSERT INTO bodegas
                 (nombre, slug, zona, subzona, direccion, telefono, whatsapp, email, sitio_web,
-                 descripcion, logo_url, imagen, comision_pct, estado, contacto_nombre, notas)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                 descripcion, descripcion_en, logo_url, imagen, comision_pct, estado, contacto_nombre, notas)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 nombre, slug, zona || null, subzona || null, direccion || null,
                 telefono || null, whatsapp || null, email || null, sitio_web || null,
-                descripcion || null, logo_url || null, imagen || null,
+                descripcion || null, descripcion_en || null, logo_url || null, imagen || null,
                 comision_pct != null ? comision_pct : 12.0,
                 estado || 'pendiente_contacto',
                 contacto_nombre || null, notas || null
@@ -133,7 +133,7 @@ exports.createBodega = async (req, res) => {
 exports.updateBodega = async (req, res) => {
     const camposPermitidos = [
         'nombre', 'zona', 'subzona', 'direccion', 'telefono', 'whatsapp', 'email',
-        'sitio_web', 'descripcion', 'logo_url', 'imagen', 'comision_pct', 'estado',
+        'sitio_web', 'descripcion', 'descripcion_en', 'logo_url', 'imagen', 'comision_pct', 'estado',
         'contacto_nombre', 'notas'
     ];
 
@@ -258,33 +258,67 @@ exports.generarBioBodega = async (req, res) => {
             b.sitio_web && `Sitio web: ${b.sitio_web}`,
             b.contacto_nombre && `Contacto: ${b.contacto_nombre}`,
             b.notas && `Notas internas: ${b.notas}`,
-            b.descripcion && `Descripción actual (para mejorar o reemplazar, no repetir literal): ${b.descripcion}`,
+            b.descripcion && `Descripción actual en español (para mejorar o reemplazar, no repetir literal): ${b.descripcion}`,
         ].filter(Boolean).join('\n');
 
+        // Pedimos las DOS versiones (español + inglés) en una sola llamada — así el
+        // sitio puede mostrar la bio correcta según el idioma elegido (ES/EN) sin
+        // pagar/esperar dos consultas separadas a la IA. Usamos marcadores de texto
+        // simples en vez de un "response_format" JSON porque no sabemos de antemano
+        // si el modelo configurado en OPENAI_MODEL lo soporta (ya tuvimos un caso de
+        // un parámetro no soportado por un modelo nuevo).
         const systemPrompt = `Sos un redactor especializado en marketing de vino y turismo enológico. Escribís bios de bodegas de Mendoza para un marketplace B2B (Mendoza Reserve) que las conecta con compradores e importadores de vino en el Reino Unido.
-Escribí en español, en un tono cálido, profesional y creíble — nada de superlativos vacíos ni inventar premios, certificaciones, años de fundación o varietales que no te dieron como dato. Si falta un dato, no lo inventes: simplemente no lo menciones.
-La bio tiene que servir para DOS cosas a la vez: (a) que Roberto (el dueño de Mendoza Reserve) se la pueda mostrar a la bodega como algo atractivo cuando la contacta por primera vez, y (b) que funcione como la descripción pública de la bodega en el sitio.
-Extensión: máximo ${LIMITE_CARACTERES} caracteres (contando espacios), 2 a 4 párrafos cortos. Devolvé SOLO el texto de la bio, sin título, sin comillas, sin markdown.`;
+Tono cálido, profesional y creíble — nada de superlativos vacíos ni inventar premios, certificaciones, años de fundación o varietales que no te dieron como dato. Si falta un dato, no lo inventes: simplemente no lo menciones.
+La bio tiene que servir para DOS cosas a la vez: (a) que Roberto (el dueño de Mendoza Reserve) se la pueda mostrar a la bodega como algo atractivo cuando la contacta por primera vez, y (b) que funcione como la descripción pública de la bodega en el sitio, tanto en español como en inglés.
+Extensión: máximo ${LIMITE_CARACTERES} caracteres cada versión (contando espacios), 2 a 4 párrafos cortos.
+Escribí DOS versiones del mismo contenido: una en español (Argentina) y una traducción profesional al inglés británico (natural, no literal palabra por palabra). Respondé EXACTAMENTE con este formato, sin nada antes ni después, sin markdown ni comillas:
+###ES###
+<bio en español>
+###EN###
+<bio en inglés británico>`;
 
-        const userPrompt = `Datos disponibles de la bodega:\n${datosConocidos}\n\nEscribí la bio.`;
+        const userPrompt = `Datos disponibles de la bodega:\n${datosConocidos}\n\nEscribí las dos versiones de la bio.`;
 
         const response = await openai.chat.completions.create({
             model: MODEL,
             // Los modelos nuevos (gpt-5.x en adelante) rechazan "max_tokens" y piden
             // "max_completion_tokens" en su lugar — ver OPENAI_MODEL en el .env.
-            max_completion_tokens: 900,
+            // Subimos el límite respecto de antes porque ahora pedimos dos idiomas
+            // en la misma respuesta.
+            max_completion_tokens: 1700,
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: userPrompt }
             ]
         });
 
-        let bio = response.choices?.[0]?.message?.content?.trim() || '';
+        const raw = response.choices?.[0]?.message?.content?.trim() || '';
+
+        let bio = '';
+        let bioEn = '';
+        const matchEs = raw.match(/###ES###([\s\S]*?)###EN###/i);
+        const matchEn = raw.match(/###EN###([\s\S]*)$/i);
+        if (matchEs && matchEn) {
+            bio = matchEs[1].trim();
+            bioEn = matchEn[1].trim();
+        } else {
+            // El modelo no respetó el formato pedido — usamos todo como versión en
+            // español y dejamos la de inglés vacía para que el admin la complete a
+            // mano (mejor esto que devolver un error y no dar nada útil).
+            bio = raw;
+        }
+
         if (bio.length > LIMITE_CARACTERES) bio = bio.slice(0, LIMITE_CARACTERES).trim();
+        if (bioEn.length > LIMITE_CARACTERES) bioEn = bioEn.slice(0, LIMITE_CARACTERES).trim();
 
         if (!bio) return res.status(502).json({ error: 'La IA no devolvió texto. Probá de nuevo.' });
 
-        res.json({ descripcion: bio, caracteres: bio.length });
+        res.json({
+            descripcion: bio,
+            descripcion_en: bioEn,
+            caracteres: bio.length,
+            caracteres_en: bioEn.length,
+        });
     } catch (error) {
         console.error('Error al generar bio con IA:', error.message);
         res.status(500).json({ error: 'Error al generar la descripción con IA.' });

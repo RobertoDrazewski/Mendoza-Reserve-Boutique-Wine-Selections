@@ -74,6 +74,11 @@ const BodegaDetalle = () => {
     if (loading) return <div className="loading-state"><h3>{currentT.loading}</h3></div>;
     if (!bodega) return <div className="loading-state"><h3>{currentT.notFound}</h3></div>;
 
+    // La bio se generó en dos idiomas (ver admin), pero si todavía no existe la
+    // versión en inglés para esta bodega, mostramos la de español antes que nada
+    // en blanco.
+    const bio = lang === 'en' ? (bodega.descripcion_en || bodega.descripcion) : bodega.descripcion;
+
     return (
         <div className="detalle-page-wrapper">
             <div className="detalle-page-inner">
@@ -96,7 +101,7 @@ const BodegaDetalle = () => {
                     <h1 className="bodega-title">{bodega.nombre}</h1>
                     <div className="divider-dorado"></div>
 
-                    {bodega.descripcion && <p className="descripcion-texto">{bodega.descripcion}</p>}
+                    {bio && <p className="descripcion-texto">{bio}</p>}
 
                     <div className="info-grid">
                         {bodega.direccion && (
