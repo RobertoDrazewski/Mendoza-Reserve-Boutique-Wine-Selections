@@ -15,28 +15,37 @@
 
 .footer-top {
     border-top: 3px solid #b8933a;
-    padding: 36px 32px 28px;
+    padding: 26px 40px 22px;
 }
 
+/* Una sola fila, de punta a punta: marca pegada al borde izquierdo,
+   Reino Unido centrado, Argentina pegada al borde derecho. Con
+   "justify-content: space-between" el espacio sobrante se reparte entre
+   los tres bloques en vez de apilarlos centrados en una columna angosta
+   (que es lo que hacía ver todo "muy centrado y muy alto"). */
 .footer-container {
-    max-width: 700px;
+    max-width: 1240px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
+    display: flex;
     align-items: center;
-    gap: 28px;
+    justify-content: space-between;
+    gap: 24px;
 }
 
 .footer-col {
     display: flex;
     flex-direction: column;
+    flex: 1 1 0;
+    min-width: 0;
 }
 
-/* --- Columna de marca --- */
+/* --- Columna de marca (izquierda) --- */
 .footer-brand {
+    flex: 1.5 1 0;
     flex-direction: row;
     align-items: center;
     gap: 14px;
+    text-align: left;
 }
 
 .footer-brand-mark {
@@ -70,9 +79,17 @@
     max-width: 260px;
 }
 
-/* --- Columnas de contacto (Reino Unido / Argentina) --- */
+/* --- Columnas de contacto: Reino Unido (centro) / Argentina (derecha) --- */
 .footer-contact-col {
     gap: 6px;
+    align-items: center;
+    text-align: center;
+}
+
+/* La de Argentina es la última columna del footer — pegada al borde derecho. */
+.footer-contact-col:last-child {
+    align-items: flex-end;
+    text-align: right;
 }
 
 .footer-contact-label {
@@ -108,9 +125,9 @@
 }
 
 .footer-bottom-inner {
-    max-width: 780px;
+    max-width: 1240px;
     margin: 0 auto;
-    padding: 18px 32px;
+    padding: 14px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -151,8 +168,8 @@
 }
 
 .footer-puma-logo {
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
     object-fit: contain;
 }
 
@@ -166,20 +183,23 @@
 /* --- Responsivo --- */
 @media (max-width: 700px) {
     .footer-container {
-        grid-template-columns: 1fr 1fr;
+        flex-wrap: wrap;
         gap: 24px 32px;
     }
+    .footer-col {
+        flex: 1 1 45%;
+    }
     .footer-brand {
-        grid-column: 1 / -1;
+        flex: 1 1 100%;
     }
 }
 
 @media (max-width: 600px) {
     .footer-top {
-        padding: 36px 24px 28px;
+        padding: 32px 24px 26px;
     }
     .footer-container {
-        grid-template-columns: 1fr;
+        flex-direction: column;
         gap: 28px;
         text-align: center;
     }
@@ -191,8 +211,10 @@
     .footer-tagline {
         max-width: none;
     }
-    .footer-contact-col {
+    .footer-contact-col,
+    .footer-contact-col:last-child {
         align-items: center;
+        text-align: center;
     }
     .footer-bottom-inner {
         flex-direction: column;
