@@ -270,7 +270,9 @@ Extensión: máximo ${LIMITE_CARACTERES} caracteres (contando espacios), 2 a 4 p
 
         const response = await openai.chat.completions.create({
             model: MODEL,
-            max_tokens: 900,
+            // Los modelos nuevos (gpt-5.x en adelante) rechazan "max_tokens" y piden
+            // "max_completion_tokens" en su lugar — ver OPENAI_MODEL en el .env.
+            max_completion_tokens: 900,
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: userPrompt }

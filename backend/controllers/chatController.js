@@ -67,7 +67,9 @@ Si preguntan algo que no tiene que ver con este pedido (otras bodegas, otros ped
         ];
 
         let response = await openai.chat.completions.create({
-            model: MODEL, max_tokens: 500, tools, messages
+            // Los modelos nuevos (gpt-5.x en adelante) rechazan "max_tokens" y piden
+            // "max_completion_tokens" en su lugar — ver OPENAI_MODEL en el .env.
+            model: MODEL, max_completion_tokens: 500, tools, messages
         });
         let choice = response.choices[0];
 
@@ -90,7 +92,9 @@ Si preguntan algo que no tiene que ver con este pedido (otras bodegas, otros ped
             }
 
             response = await openai.chat.completions.create({
-                model: MODEL, max_tokens: 500, tools, messages
+                // Los modelos nuevos (gpt-5.x en adelante) rechazan "max_tokens" y piden
+            // "max_completion_tokens" en su lugar — ver OPENAI_MODEL en el .env.
+            model: MODEL, max_completion_tokens: 500, tools, messages
             });
             choice = response.choices[0];
         }
