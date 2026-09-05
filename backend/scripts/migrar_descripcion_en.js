@@ -8,7 +8,6 @@
 // Lee la conexión desde backend/.env (las mismas variables DB_HOST, DB_USER,
 // DB_PASSWORD, DB_NAME, DB_PORT, DB_SSL que ya usa el servidor).
 
-const fs = require('fs');
 const path = require('path');
 const mysql = require('mysql2/promise');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
@@ -30,12 +29,24 @@ async function main() {
 
     console.log('✅ Conectado.\n');
 
-    const sql = fs.readFileSync(path.join(__dirname, '..', 'sql', 'add_descripcion_en.sql'), 'utf8');
-
+    // No usamos "ADD COLUMN IF NOT EXISTS" porque esa sintaxis no la soportan todas
+    // las versiones de MySQL (la de Aiven tiró error de sintaxis con eso) —
+    // chequeamos nosotros mismos contra information_schema antes de alterar la tabla,
+    // así el script es idempotente en cualquier versión.
     try {
-        console.log('▶ Agregando columna descripcion_en (si no existe todavía)...');
-        await connection.query(sql);
-        console.log('  ✅ Listo.\n');
+        const [cols] = await connection.query(
+            `SELECT COUNT(*) AS existe FROM information_schema.columns
+             WHERE table_schema = ? AND table_name = 'bodegas' AND column_name = 'descripcion_en'`,
+            [process.env.DB_NAME]
+        );
+
+        if (cols[0].existe > 0) {
+            console.log('▶ La columna descripcion_en ya existe — no hace falta hacer nada.\n');
+        } else {
+            console.log('▶ Agregando columna descripcion_en...');
+            await connection.query('ALTER TABLE bodegas ADD COLUMN descripcion_en TEXT AFTER descripcion');
+            console.log('  ✅ Listo.\n');
+        }
     } catch (err) {
         console.error('  ❌ Error:', err.message);
         await connection.end();
