@@ -25,6 +25,22 @@ const ZONA_COORDS = {
 // que todavía no está en la tabla de arriba.
 const ZONA_FALLBACK = [-33.6, -68.9];
 
+// Dos capas de mapa para elegir: satelital (por defecto, para ver fincas/viñedos
+// reales) y calles (OpenStreetMap, como estaba antes). Las dos son gratuitas y no
+// piden API key ni cuenta con billing (a diferencia de Google Maps satelital).
+const TILE_LAYERS = {
+    satelital: {
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        attribution: 'Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+        maxZoom: 19,
+    },
+    calles: {
+        url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+    },
+};
+
 function coordsForZona(zona) {
     if (!zona) return ZONA_FALLBACK;
     if (ZONA_COORDS[zona]) return ZONA_COORDS[zona];
@@ -48,6 +64,8 @@ const MapaBodegas = () => {
     const [error, setError] = useState(null);
     const mapDivRef = useRef(null);
     const mapRef = useRef(null);
+    const tileLayerRef = useRef(null);
+    const [vista, setVista] = useState('satelital');
     const { lang } = useLanguage();
 
     const API_URL = process.env.REACT_APP_API_URL || '/api';
@@ -63,6 +81,8 @@ const MapaBodegas = () => {
             activeShort: 'activas',
             comingSoon: 'próximamente',
             legendTitle: 'Zonas',
+            viewSatellite: 'Satelital',
+            viewStreets: 'Calles',
         },
         en: {
             title: 'Winery Map',
@@ -74,6 +94,8 @@ const MapaBodegas = () => {
             activeShort: 'active',
             comingSoon: 'coming soon',
             legendTitle: 'Regions',
+            viewSatellite: 'Satellite',
+            viewStreets: 'Streets',
         },
     };
     const currentT = t[lang] || t['es'];
@@ -120,11 +142,8 @@ const MapaBodegas = () => {
             mapRef.current = L.map(mapDivRef.current, {
                 scrollWheelZoom: false,
             }).setView([-33.6, -68.9], 8);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                maxZoom: 18,
-            }).addTo(mapRef.current);
+            // La capa base (satelital/calles) la agrega el efecto de abajo, que
+            // reacciona a "vista" — así se puede cambiar de capa sin recrear el mapa.
         }
 
         const map = mapRef.current;
@@ -173,6 +192,27 @@ const MapaBodegas = () => {
         };
     }, [zonas, currentT]);
 
+    // Cambia la capa base (satelital/calles) cuando el usuario elige otra vista, y
+    // también la primera vez que el mapa se crea (zonas.length pasa de 0 a >0, que es
+    // cuando el efecto de arriba instancia mapRef.current).
+    useEffect(() => {
+        const map = mapRef.current;
+        if (!map) return undefined;
+
+        if (tileLayerRef.current) {
+            map.removeLayer(tileLayerRef.current);
+        }
+        const capa = TILE_LAYERS[vista] || TILE_LAYERS.satelital;
+        tileLayerRef.current = L.tileLayer(capa.url, {
+            attribution: capa.attribution,
+            maxZoom: capa.maxZoom,
+        }).addTo(map);
+        tileLayerRef.current.bringToBack();
+
+        return undefined;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [vista, zonas.length]);
+
     // Limpieza del mapa al desmontar el componente
     useEffect(() => {
         return () => {
@@ -203,7 +243,25 @@ const MapaBodegas = () => {
 
             <div className="mapa-container">
                 <div className="mapa-panel">
-                    <div ref={mapDivRef} className="mapa-leaflet" />
+                    <div className="mapa-leaflet-wrap">
+                        <div ref={mapDivRef} className="mapa-leaflet" />
+                        <div className="mapa-vista-toggle">
+                            <button
+                                type="button"
+                                className={vista === 'satelital' ? 'active' : ''}
+                                onClick={() => setVista('satelital')}
+                            >
+                                🛰 {currentT.viewSatellite}
+                            </button>
+                            <button
+                                type="button"
+                                className={vista === 'calles' ? 'active' : ''}
+                                onClick={() => setVista('calles')}
+                            >
+                                🗺 {currentT.viewStreets}
+                            </button>
+                        </div>
+                    </div>
 
                     <div className="mapa-legend">
                         <h3>{currentT.legendTitle}</h3>

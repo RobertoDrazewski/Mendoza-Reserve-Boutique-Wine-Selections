@@ -72,9 +72,55 @@
     flex-wrap: wrap;
 }
 
-.mapa-leaflet {
+.mapa-leaflet-wrap {
+    position: relative;
     flex: 1 1 640px;
     min-height: 520px;
+}
+
+.mapa-leaflet {
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+}
+
+/* --- Selector satelital / calles, flotando sobre el mapa --- */
+.mapa-vista-toggle {
+    position: absolute;
+    top: 14px;
+    /* A la derecha, no a la izquierda, para no superponerse con los botones +/- de
+       zoom de Leaflet (que Leaflet ubica arriba a la izquierda por defecto). */
+    right: 14px;
+    z-index: 500; /* por encima de los tiles y controles de zoom de Leaflet */
+    display: flex;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 30px;
+    padding: 4px;
+    box-shadow: 0 4px 14px rgba(20, 6, 10, 0.25);
+    gap: 2px;
+}
+
+.mapa-vista-toggle button {
+    border: none;
+    background: transparent;
+    color: #666;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 24px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mapa-vista-toggle button:hover {
+    background: rgba(166, 58, 67, 0.1);
+}
+
+.mapa-vista-toggle button.active {
+    background: #a63a43;
+    color: #fff;
 }
 
 /* El mapa de Leaflet necesita un alto explícito en cada ancestro para
