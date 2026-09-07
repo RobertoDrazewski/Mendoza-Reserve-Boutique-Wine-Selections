@@ -15,6 +15,8 @@ const contactoRoutes = require('./routes/contacto'); // <-- Restaurado (por si l
 const shipmentsRoutes = require('./routes/shipments');
 const leadsRoutes = require('./routes/leads'); // CRM interno de leads UK (no público)
 const chatRoutes = require('./routes/chat'); // Asistente IA de seguimiento de pedido (Fase 5)
+const bodegaPortalRoutes = require('./routes/bodegaPortal'); // Portal de autogestión de la bodega
+const closerPortalRoutes = require('./routes/closerPortal'); // Portal del closer (leads + red de bodegas)
 const orderController = require('./controllers/orderController'); // para el webhook de Revolut, ver punto 3.1
 
 const app = express();
@@ -77,12 +79,21 @@ app.post('/api/webhooks/revolut', express.raw({ type: 'application/json' }), ord
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 4. CARPETA DE IMÁGENES (Punto Crítico para Render)
-// Sirve la carpeta 'images' desde la raíz del backend con permisos CORS
+// 4. CARPETA DE IMÁGENES (Punto Crítico para Render/Railway)
+// Sirve las imágenes (incl. las que sube el admin a mano en bodegaController.js) desde
+// IMAGES_DIR con permisos CORS. Sin la variable de entorno IMAGES_DIR, usa backend/images
+// (comportamiento de siempre, cero impacto en local) — pero en Railway esa carpeta es
+// efímera: se borra en cada redeploy. Para que las fotos subidas por el admin persistan,
+// hay que crear un Volume en Railway, montarlo en un path propio (ej. /data) y setear
+// IMAGES_DIR=/data/images como variable de entorno (ver backend/.env.example). Tiene que
+// ser EXACTAMENTE el mismo valor que usa bodegaController.js para guardar los uploads.
+const IMAGES_DIR = process.env.IMAGES_DIR
+    ? path.resolve(process.env.IMAGES_DIR)
+    : path.join(__dirname, 'images');
 app.use('/images', (req, res, next) => {
-    res.set('Access-Control-Allow-Origin', '*'); 
+    res.set('Access-Control-Allow-Origin', '*');
     next();
-}, express.static(path.join(__dirname, 'images')));
+}, express.static(IMAGES_DIR));
 
 // Si usas una subcarpeta public/images, esta línea actúa como respaldo:
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
@@ -96,6 +107,8 @@ app.use('/api/contacto', contactoRoutes); // <-- Restaurado
 app.use('/api/shipments', shipmentsRoutes);
 app.use('/api/leads', leadsRoutes); // uso interno (admin) — CRM de leads UK
 app.use('/api/chat', chatRoutes);
+app.use('/api/bodega', bodegaPortalRoutes); // portal de autogestión de la bodega
+app.use('/api/closer', closerPortalRoutes); // portal del closer
 
 // Ruta de salud del sistema
 app.get('/api/health', (req, res) => res.json({

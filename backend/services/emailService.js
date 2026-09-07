@@ -143,6 +143,46 @@ async function emailActualizacionEnvio({ buyerEmail, buyerName, bodegaNombre, sh
     return enviarEmail({ to: buyerEmail, subject: `Actualización de envío — ${bodegaNombre}`, html });
 }
 
+// 1.c Email de bienvenida al registrarse (comprador, bodega o closer) — repite el email
+// y la contraseña que la persona acaba de elegir, a modo de comprobante de alta, y el
+// link para entrar a su panel según el rol. Roberto lo pidió explícitamente así (server
+// no genera ninguna contraseña nueva acá, sólo confirma por email la que la persona ya
+// tipeó en el formulario) — vale la pena que sepa que, por norma general de seguridad,
+// mandar la contraseña por email no es lo más recomendado (si algún día el buzón de
+// alguien se ve comprometido, esa contraseña queda expuesta); si en algún momento
+// prefiere, se puede cambiar fácil a un link de "activar cuenta" sin exponer la clave.
+function urlPortal(rol) {
+    if (rol === 'bodega') return `${SITE_URL}/bodega/login`;
+    if (rol === 'closer') return `${SITE_URL}/closer/login`;
+    if (rol === 'admin') return `${SITE_URL}/admin/login`;
+    return `${SITE_URL}/login`;
+}
+
+function etiquetaRol(rol) {
+    if (rol === 'bodega') return 'Bodega';
+    if (rol === 'closer') return 'Closer / Vendedor UK';
+    if (rol === 'admin') return 'Administrador';
+    return 'Comprador';
+}
+
+async function emailBienvenidaAcceso({ email, password, nombre, rol }) {
+    const loginUrl = urlPortal(rol);
+    const html = layoutBase(`
+        <h2 style="color:#a63a43;font-family:Georgia,serif;">Tu cuenta ya está lista</h2>
+        <p>Hola ${nombre || ''},</p>
+        <p>Te registraste en Mendoza Reserve con el perfil <strong>${etiquetaRol(rol)}</strong>. Guardá estos datos de acceso:</p>
+        <table style="width:100%;border-collapse:collapse;margin:18px 0;">
+          <tr><td style="padding:8px 0;color:#777;">Usuario (email)</td><td style="padding:8px 0;"><strong>${email}</strong></td></tr>
+          <tr><td style="padding:8px 0;color:#777;">Contraseña</td><td style="padding:8px 0;"><strong>${password}</strong></td></tr>
+        </table>
+        <p style="text-align:center;margin:25px 0;">
+          <a href="${loginUrl}" style="background:#a63a43;color:#fff;padding:14px 28px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;">Ingresar a mi panel</a>
+        </p>
+        <p style="font-size:0.8rem;color:#777;">Por seguridad, te recomendamos no compartir este email y, si querés, cambiar la contraseña más adelante.</p>
+    `);
+    return enviarEmail({ to: email, subject: 'Tus datos de acceso — Mendoza Reserve', html });
+}
+
 // 5. Aviso interno a Roberto: alguien mandó el formulario de contacto.
 async function emailNuevaConsultaContacto({ nombre, email, asunto, mensaje }) {
     if (!ADMIN_NOTIFY_EMAIL) return;
@@ -184,6 +224,7 @@ module.exports = {
     emailConfirmacionComprador,
     emailRespuestaBodega,
     emailActualizacionEnvio,
+    emailBienvenidaAcceso,
     emailNuevaConsultaContacto,
     emailNuevoChatCliente
 };

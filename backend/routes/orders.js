@@ -23,6 +23,7 @@ router.put('/admin/:id', [verificarToken, esAdmin], orderController.updateOrderA
  */
 router.post('/', verificarToken, orderController.createOrder);
 router.get('/mis-ordenes', verificarToken, orderController.getUserOrders);
+router.get('/:id/invoice', verificarToken, orderController.downloadInvoice);
 router.get('/:id', verificarToken, orderController.getOrderById);
 
 module.exports = router;

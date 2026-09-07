@@ -194,13 +194,19 @@ exports.deleteBodega = async (req, res) => {
     }
 };
 
-// 8. Subir una foto a mano para la bodega (admin) — se guarda en backend/images/bodegas
-// y queda servida en /images/bodegas/<archivo> (misma carpeta estática que ya sirve
-// index.js). Reemplaza el campo "imagen" por el nombre de archivo nuevo.
-// OJO: en Railway sin un Volume montado en backend/images, esta carpeta es efímera y
-// las fotos subidas así se pierden en el próximo deploy — hace falta un Volume para
-// que persistan (ver README/checklist de deploy).
-const CARPETA_UPLOADS = path.join(__dirname, '..', 'images', 'bodegas');
+// 8. Subir una foto a mano para la bodega (admin) — se guarda en el directorio de
+// imágenes configurado (ver IMAGES_DIR más abajo) y queda servida en
+// /images/bodegas/<archivo> (index.js sirve IMAGES_DIR bajo /images con esa misma
+// lógica). Reemplaza el campo "imagen" por el nombre de archivo nuevo.
+// OJO: si IMAGES_DIR no está seteada, se usa backend/images por defecto — en Railway
+// esa carpeta es efímera (sin un Volume montado ahí, las fotos subidas se pierden en
+// el próximo deploy). Para que persistan: crear un Volume en Railway, montarlo en un
+// path propio (ej. /data), y setear IMAGES_DIR=/data/images como variable de entorno
+// (ver backend/.env.example y el checklist de deploy).
+const DIRECTORIO_IMAGENES = process.env.IMAGES_DIR
+    ? path.resolve(process.env.IMAGES_DIR)
+    : path.join(__dirname, '..', 'images');
+const CARPETA_UPLOADS = path.join(DIRECTORIO_IMAGENES, 'bodegas');
 fs.mkdirSync(CARPETA_UPLOADS, { recursive: true });
 
 const storage = multer.diskStorage({

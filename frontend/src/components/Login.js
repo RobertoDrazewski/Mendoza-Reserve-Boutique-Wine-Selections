@@ -66,9 +66,13 @@ const Login = () => {
         // Guardamos usuario y token mediante el contexto
         login(data.user, data.token);
 
-        // Redirección inteligente
+        // Redirección inteligente según el rol de la cuenta
         if (data.user.rol === 'admin') {
           navigate('/admin');
+        } else if (data.user.rol === 'bodega') {
+          navigate('/bodega/dashboard');
+        } else if (data.user.rol === 'closer') {
+          navigate('/closer/dashboard');
         } else {
           navigate('/vinos');
         }

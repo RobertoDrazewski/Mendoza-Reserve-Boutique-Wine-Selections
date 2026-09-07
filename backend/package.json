@@ -10,6 +10,7 @@
     "crear-admin": "node scripts/crear_admin.js",
     "migrar-descripcion-en": "node scripts/migrar_descripcion_en.js",
     "migrar-reservas": "node scripts/migrar_reservas.js",
+    "migrar-roles-portales": "node scripts/migrar_roles_portales.js",
     "setup-revolut-webhook": "node scripts/setup_revolut_webhook.js"
   },
   "keywords": [
@@ -30,6 +31,7 @@
     "multer": "^2.3.0",
     "mysql2": "^3.20.0",
     "openai": "^7.10.0",
+    "pdfkit": "^0.15.2",
     "resend": "^6.26.0"
   },
   "devDependencies": {

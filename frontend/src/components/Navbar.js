@@ -24,12 +24,14 @@ const Navbar = () => {
         es: {
             home: "Inicio", bodegas: "Bodegas", vinos: "Vinos", historia: "Historia",
             contacto: "Contacto", login: "Ingresar", registro: "Registro",
-            logout: "Salir", welcome: "Hola", seguimiento: "Mi pedido", admin: "Admin", mapa: "Mapa"
+            logout: "Salir", welcome: "Hola", seguimiento: "Mi pedido", admin: "Admin", mapa: "Mapa",
+            misPedidos: "Mis pedidos", panelBodega: "Panel bodega", panelCloser: "Panel closer"
         },
         en: {
             home: "Home", bodegas: "Wineries", vinos: "Wines", historia: "Our Story",
             contacto: "Contact", login: "Login", registro: "Register",
-            logout: "Logout", welcome: "Hi", seguimiento: "Track order", admin: "Admin", mapa: "Map"
+            logout: "Logout", welcome: "Hi", seguimiento: "Track order", admin: "Admin", mapa: "Map",
+            misPedidos: "My orders", panelBodega: "Winery panel", panelCloser: "Closer panel"
         }
     };
 
@@ -56,6 +58,15 @@ const Navbar = () => {
                         <NavLink to="/historia" className={({ isActive }) => isActive ? "active" : ""}>{currentT.historia}</NavLink>
                         <NavLink to="/contacto" className={({ isActive }) => isActive ? "active" : ""}>{currentT.contacto}</NavLink>
                         <NavLink to="/seguimiento" className={({ isActive }) => isActive ? "active" : ""}>{currentT.seguimiento}</NavLink>
+                        {user?.rol === 'cliente' && (
+                            <NavLink to="/mis-pedidos" className={({ isActive }) => isActive ? "active" : ""}>{currentT.misPedidos}</NavLink>
+                        )}
+                        {user?.rol === 'bodega' && (
+                            <NavLink to="/bodega/dashboard" className={({ isActive }) => isActive ? "active" : ""}>{currentT.panelBodega}</NavLink>
+                        )}
+                        {user?.rol === 'closer' && (
+                            <NavLink to="/closer/dashboard" className={({ isActive }) => isActive ? "active" : ""}>{currentT.panelCloser}</NavLink>
+                        )}
                         {user?.rol === 'admin' && (
                             <NavLink to="/admin" className={({ isActive }) => isActive ? "active" : ""}>{currentT.admin}</NavLink>
                         )}

@@ -8,6 +8,7 @@ const {
 } = require('../services/emailService');
 const { crearOrdenReserva, reembolsarOrden } = require('../services/revolutClient');
 const { verificarFirmaWebhook } = require('../services/revolutWebhookAuth');
+const { generarInvoicePDF } = require('../services/invoiceService');
 
 // Genera un token largo y aleatorio para que la bodega confirme el pedido por email sin login
 function generarAcceptToken() {
@@ -499,6 +500,39 @@ exports.webhookRevolut = async (req, res) => {
     } catch (error) {
         console.error('Error procesando webhook de Revolut:', error.message);
         res.status(500).json({ error: 'Error procesando el webhook' });
+    }
+};
+
+// 6.b Descargar la invoice (PDF) de la reserva pagada — dueño de la orden o admin.
+// OJO: es el comprobante de la RESERVA (comisión del 12%), no la factura del vino en
+// sí, que la bodega emite y cobra aparte, directamente al comprador.
+exports.downloadInvoice = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const lang = req.query.lang === 'en' ? 'en' : 'es';
+        const [orderRows] = await db.query(
+            `SELECT o.*, b.nombre AS bodega_nombre FROM orders o
+             JOIN bodegas b ON b.id = o.bodega_id WHERE o.id = ?`, [id]
+        );
+        if (orderRows.length === 0) return res.status(404).json({ message: 'Orden no encontrada' });
+
+        const order = orderRows[0];
+        const esDueno = req.user && order.user_id === req.user.id;
+        const esAdmin = req.user && req.user.rol === 'admin';
+        if (!esDueno && !esAdmin) return res.status(403).json({ message: 'No autorizado' });
+
+        const [items] = await db.query(
+            `SELECT oi.*, v.nombre AS vino_nombre, v.varietal, v.cosecha FROM order_items oi
+             JOIN vinos v ON v.id = oi.vino_id WHERE oi.order_id = ?`, [id]
+        );
+
+        const pdfBuffer = await generarInvoicePDF({ order, items, lang });
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="mendoza-reserve-invoice-${order.id}.pdf"`);
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error('Error en downloadInvoice:', error.message);
+        res.status(500).json({ error: 'Error al generar la invoice' });
     }
 };
 

@@ -14,13 +14,19 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- usuarios: compradores + admin (Roberto). Las bodegas NO tienen login
 -- en v1 (actúan por email con accept_token) — ver tabla `orders`.
 -- ---------------------------------------------------------------------
+-- rol: 'cliente' = comprador UK, 'admin' = Roberto, 'bodega' = usuario de alta propia de
+-- una bodega (linkeado a su fila en `bodegas` vía bodega_id), 'closer' = vendedor UK
+-- (Amanda/Burt/Mariona y quien se sume después) que carga leads en `leads_uk`.
+-- bodega_id sólo se usa cuando rol='bodega' — el FK a bodegas se agrega más abajo con
+-- ALTER TABLE porque acá arriba la tabla `bodegas` todavía no existe.
 CREATE TABLE IF NOT EXISTS usuarios (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     nombre          VARCHAR(100) NOT NULL,
     apellido        VARCHAR(100),
     email           VARCHAR(150) NOT NULL UNIQUE,
     password        VARCHAR(255) NOT NULL,
-    rol             ENUM('cliente','admin') NOT NULL DEFAULT 'cliente',
+    rol             ENUM('cliente','admin','bodega','closer') NOT NULL DEFAULT 'cliente',
+    bodega_id       INT NULL,                   -- sólo si rol='bodega': su fila en `bodegas`
     empresa         VARCHAR(150),               -- nombre del restaurante/negocio comprador (UK)
     telefono        VARCHAR(50),
     pais            VARCHAR(80) DEFAULT 'United Kingdom',
@@ -71,6 +77,14 @@ CREATE TABLE IF NOT EXISTS bodegas (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX idx_bodegas_estado ON bodegas (estado);
+
+-- Ahora que `bodegas` ya existe, cerramos el vínculo usuarios.bodega_id -> bodegas.id
+-- (una bodega que se da de alta sola crea su propia fila acá en 'pendiente_contacto'
+-- y su usuario con rol='bodega' apuntando a esa fila).
+ALTER TABLE usuarios
+    ADD CONSTRAINT fk_usuarios_bodega FOREIGN KEY (bodega_id) REFERENCES bodegas(id) ON DELETE SET NULL;
+CREATE INDEX idx_usuarios_bodega ON usuarios (bodega_id);
+CREATE INDEX idx_usuarios_rol ON usuarios (rol);
 
 -- ---------------------------------------------------------------------
 -- vinos: catálogo de cada bodega. Sólo se muestran si activo=1 y la
@@ -224,10 +238,15 @@ CREATE TABLE IF NOT EXISTS leads_uk (
     estado          ENUM('no_contactado','contactado','interesado','cliente','descartado')
                     NOT NULL DEFAULT 'no_contactado',
     notas           TEXT,
+    -- closer_id: qué vendedor (usuarios.rol='closer') cargó este lead — NULL si lo
+    -- cargó Roberto directamente desde el panel admin.
+    closer_id       INT NULL,
     fecha_creacion  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fecha_ultimo_contacto DATETIME NULL
+    fecha_ultimo_contacto DATETIME NULL,
+    CONSTRAINT fk_leads_closer FOREIGN KEY (closer_id) REFERENCES usuarios(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX idx_leads_estado ON leads_uk (estado);
+CREATE INDEX idx_leads_closer ON leads_uk (closer_id);
 
 SET FOREIGN_KEY_CHECKS = 1;

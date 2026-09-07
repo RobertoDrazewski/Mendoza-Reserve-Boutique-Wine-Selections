@@ -19,6 +19,9 @@ import Carrito from './components/Carrito';
 import OrderTracking from './components/OrderTracking';
 import WineryOrderResponse from './components/WineryOrderResponse';
 import AdminPanel from './components/admin/AdminPanel';
+import BodegaDashboard from './components/bodega/BodegaDashboard';
+import CloserDashboard from './components/closer/CloserDashboard';
+import MisPedidos from './components/MisPedidos';
 
 import './App.css';
 
@@ -43,14 +46,27 @@ function App() {
                   <Route path="/historia" element={<Historia />} />
                   <Route path="/contacto" element={<Contacto />} />
                   <Route path="/login" element={<Login />} />
+                  {/* Alias del mismo login unificado — usados en los links de los emails de
+                      bienvenida (registerBodega/registerCloser) para que cada quien entienda
+                      a qué panel está entrando; el login en sí es el mismo endpoint para todos. */}
+                  <Route path="/bodega/login" element={<Login />} />
+                  <Route path="/closer/login" element={<Login />} />
+                  <Route path="/admin/login" element={<Login />} />
                   <Route path="/carrito" element={<Carrito />} />
 
                   {/* Seguimiento de pedido (comprador) — con o sin código en la URL */}
                   <Route path="/seguimiento" element={<OrderTracking />} />
                   <Route path="/seguimiento/:cartGroupId" element={<OrderTracking />} />
 
+                  {/* Historial de pedidos del comprador logueado (invoice incluida) */}
+                  <Route path="/mis-pedidos" element={<MisPedidos />} />
+
                   {/* Link del email a la bodega para aceptar/rechazar un pedido, sin login */}
                   <Route path="/bodega/pedido/:token" element={<WineryOrderResponse />} />
+
+                  {/* Portal de autogestión de la bodega y portal del closer */}
+                  <Route path="/bodega/dashboard" element={<BodegaDashboard />} />
+                  <Route path="/closer/dashboard" element={<CloserDashboard />} />
 
                   {/* Panel de administración (Roberto) */}
                   <Route path="/admin" element={<AdminPanel />} />
