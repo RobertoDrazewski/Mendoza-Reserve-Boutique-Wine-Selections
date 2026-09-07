@@ -74,6 +74,23 @@ async function emailNuevaOrdenBodega({ bodegaEmail, bodegaNombre, order, items }
     return enviarEmail({ to: bodegaEmail, subject: `Nuevo pedido de exportación — ${bodegaNombre}`, html });
 }
 
+// 1.b Email al comprador con el link de pago de la "reserva" (por si el
+// redirect automático al checkout de Revolut no le funcionó en el navegador).
+// Ojo: acá TODAVÍA no se le avisa nada a la bodega — eso pasa recién cuando
+// Revolut confirma el pago (ver webhookRevolut en orderController).
+async function emailReservaPendiente({ buyerEmail, buyerName, checkoutUrl, monto, moneda }) {
+    const html = layoutBase(`
+        <h2 style="color:#a63a43;font-family:Georgia,serif;">Un paso más para confirmar tu pedido</h2>
+        <p>Hola ${buyerName},</p>
+        <p>Para que tu pedido se le mande a la/las bodega/s, falta completar el pago de la reserva de <strong>${moneda} ${Number(monto).toFixed(2)}</strong>.</p>
+        <p style="text-align:center;margin:25px 0;">
+          <a href="${checkoutUrl}" style="background:#a63a43;color:#fff;padding:14px 28px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;">Pagar la reserva</a>
+        </p>
+        <p style="font-size:0.85rem;color:#777;">El resto del pedido lo facturás y coordinás directamente con cada bodega — este pago es solo la reserva de Mendoza Reserve.</p>
+    `);
+    return enviarEmail({ to: buyerEmail, subject: 'Completá el pago de tu reserva — Mendoza Reserve', html });
+}
+
 // 2. Email de confirmación al comprador (resumen de todo el cart_group).
 async function emailConfirmacionComprador({ buyerEmail, buyerName, cartGroupId, ordenesCreadas }) {
     const trackingUrl = `${SITE_URL}/seguimiento/${cartGroupId}?email=${encodeURIComponent(buyerEmail)}`;
@@ -163,6 +180,7 @@ async function emailNuevoChatCliente({ cartGroupId, email, mensajeCliente, respu
 
 module.exports = {
     emailNuevaOrdenBodega,
+    emailReservaPendiente,
     emailConfirmacionComprador,
     emailRespuestaBodega,
     emailActualizacionEnvio,

@@ -35,7 +35,9 @@ const Carrito = () => {
             phone: 'Teléfono', address: 'Dirección de envío (Reino Unido)', country: 'País',
             confirm: 'Confirmar Pedido', processing: 'Procesando...',
             note: 'Cada bodega gestiona su propio envío y coordina el pago directamente con vos. Vas a recibir un email de confirmación con el estado de cada parte del pedido.',
-            perBodega: 'de'
+            perBodega: 'de',
+            redirecting: 'Redirigiendo al pago de la reserva...',
+            reservaError: 'Tu pedido se generó, pero hubo un problema iniciando el pago de la reserva. Revisá tu email o contactanos.'
         },
         en: {
             title: 'Your Cart', empty: 'Your cart is empty', total: 'Estimated total', btn: 'Checkout',
@@ -45,7 +47,9 @@ const Carrito = () => {
             phone: 'Phone', address: 'Shipping address (UK)', country: 'Country',
             confirm: 'Confirm Order', processing: 'Processing...',
             note: 'Each winery manages its own shipping and settles payment directly with you. You will receive a confirmation email with the status of each part of the order.',
-            perBodega: 'from'
+            perBodega: 'from',
+            redirecting: 'Redirecting to reserve payment...',
+            reservaError: 'Your order was created, but there was a problem starting the reserve payment. Check your email or contact us.'
         }
     };
     const currentT = t[lang] || t['es'];
@@ -84,7 +88,24 @@ const Carrito = () => {
                 buyer: { name: form.name, company: form.company || undefined, email: form.email, phone: form.phone || undefined },
                 shipping: { address: form.address, country: form.country }
             });
+
+            // El pedido ya está creado, pero todavía no se le avisó a la/las bodega/s:
+            // eso pasa recién cuando se paga la "reserva" (comisión de Mendoza Reserve).
+            // Acá redirigimos al comprador al checkout alojado por Revolut para que la pague.
+            // Si el carrito tenía bodegas en más de una moneda (caso raro), hay más de un
+            // checkout — con el primero alcanza para el flujo normal de un comprador.
+            const reservaConCheckout = (res.data.reservas || []).find((r) => r.checkoutUrl);
             clearCart();
+            if (reservaConCheckout) {
+                setErrorMsg(null);
+                window.location.href = reservaConCheckout.checkoutUrl;
+                return; // no seguir ejecutando nada más: estamos navegando fuera del sitio
+            }
+
+            // No se pudo iniciar el pago de la reserva (ej. problema puntual con Revolut):
+            // el pedido ya quedó guardado, así que no lo tratamos como un error fatal —
+            // lo mandamos a seguimiento, donde va a ver que falta pagar la reserva.
+            setErrorMsg(currentT.reservaError);
             navigate(`/seguimiento/${res.data.cartGroupId}?email=${encodeURIComponent(form.email)}`);
         } catch (err) {
             console.error(err);

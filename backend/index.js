@@ -15,6 +15,7 @@ const contactoRoutes = require('./routes/contacto'); // <-- Restaurado (por si l
 const shipmentsRoutes = require('./routes/shipments');
 const leadsRoutes = require('./routes/leads'); // CRM interno de leads UK (no público)
 const chatRoutes = require('./routes/chat'); // Asistente IA de seguimiento de pedido (Fase 5)
+const orderController = require('./controllers/orderController'); // para el webhook de Revolut, ver punto 3.1
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -64,6 +65,13 @@ const corsOptionsDelegate = (req, callback) => {
 };
 
 app.use(cors(corsOptionsDelegate));
+
+// 3.1 WEBHOOK DE REVOLUT — tiene que ir ANTES de express.json() de acá abajo,
+// porque la verificación de firma del webhook necesita el body CRUDO tal cual
+// llegó (no ya parseado a objeto), así que usa su propio express.raw() en vez
+// del parser JSON global. Si esto se registrara después del express.json()
+// general, la firma nunca coincidiría.
+app.post('/api/webhooks/revolut', express.raw({ type: 'application/json' }), orderController.webhookRevolut);
 
 // 3. MIDDLEWARES
 app.use(express.json());

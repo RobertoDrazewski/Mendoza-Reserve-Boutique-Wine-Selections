@@ -171,6 +171,44 @@ CREATE TABLE IF NOT EXISTS shipments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
+-- reservas: el pago que el COMPRADOR le hace directo a Mendoza Reserve
+-- (el 12% de comisión, cobrado como "reserva" al momento del checkout,
+-- vía la Merchant API de Revolut Business). Mendoza Reserve nunca cobra
+-- ni retiene la plata de la bodega — eso lo factura y cobra ella
+-- directamente del comprador, aparte.
+--
+-- Normalmente es 1 fila por cart_group_id (todo el carrito, aunque tenga
+-- varias bodegas, se paga en una sola orden de Revolut) — no 1 por `orders`.
+-- Si el carrito mezcla bodegas que facturan en distinta moneda, hay 1 fila
+-- por cada moneda (ver comentario en la columna moneda más abajo).
+-- Recién cuando esta reserva queda "pagada" (via webhook de Revolut) se
+-- le manda el pedido a la/las bodega/s por email.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS reservas (
+    id                  INT AUTO_INCREMENT PRIMARY KEY,
+    -- No es UNIQUE: si el carrito mezcla bodegas que facturan en distinta
+    -- moneda, se genera una reserva (y un cobro de Revolut) por cada moneda,
+    -- así que un mismo cart_group_id puede tener más de una fila acá.
+    cart_group_id       CHAR(36) NOT NULL,
+    monto               DECIMAL(10,2) NOT NULL,
+    moneda              CHAR(3) NOT NULL DEFAULT 'GBP',
+    estado              ENUM('pendiente','pagada','fallida','reembolsada','parcialmente_reembolsada')
+                        NOT NULL DEFAULT 'pendiente',
+    reembolsado_monto   DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    revolut_order_id    VARCHAR(64) UNIQUE,
+    checkout_url        TEXT,
+    paid_at             DATETIME NULL,
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    -- Sin FK a orders.cart_group_id a propósito: esa columna no es única en `orders`
+    -- (un mismo cart_group_id se repite una vez por cada bodega del carrito), y
+    -- InnoDB exige que la columna referenciada tenga índice único. Se enlazan por
+    -- valor de cart_group_id igual que ya hacen shipments/order_items entre sí.
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_reservas_cart_group ON reservas (cart_group_id);
+CREATE INDEX idx_reservas_estado ON reservas (estado);
+
+-- ---------------------------------------------------------------------
 -- leads_uk: CRM interno de Roberto (NO público) para la campaña de
 -- mails en frío a compradores potenciales en UK.
 -- ---------------------------------------------------------------------

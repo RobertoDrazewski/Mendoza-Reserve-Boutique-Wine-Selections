@@ -8,7 +8,9 @@
     "dev": "nodemon index.js",
     "actualizar-imagenes-bodegas": "node scripts/actualizar_imagenes_bodegas.js",
     "crear-admin": "node scripts/crear_admin.js",
-    "migrar-descripcion-en": "node scripts/migrar_descripcion_en.js"
+    "migrar-descripcion-en": "node scripts/migrar_descripcion_en.js",
+    "migrar-reservas": "node scripts/migrar_reservas.js",
+    "setup-revolut-webhook": "node scripts/setup_revolut_webhook.js"
   },
   "keywords": [
     "express",

@@ -2,9 +2,12 @@ const crypto = require('crypto');
 const db = require('../config/db');
 const {
     emailNuevaOrdenBodega,
+    emailReservaPendiente,
     emailConfirmacionComprador,
     emailRespuestaBodega
 } = require('../services/emailService');
+const { crearOrdenReserva, reembolsarOrden } = require('../services/revolutClient');
+const { verificarFirmaWebhook } = require('../services/revolutWebhookAuth');
 
 // Genera un token largo y aleatorio para que la bodega confirme el pedido por email sin login
 function generarAcceptToken() {
@@ -134,33 +137,80 @@ exports.createOrder = async (req, res) => {
 
         await connection.commit();
 
-        // Emails salen DESPUÉS del commit y nunca deben tumbar la respuesta al comprador
-        // si Resend falla — por eso van en su propio try/catch, no dentro de la transacción.
-        try {
-            for (const o of ordenesCreadas) {
-                await emailNuevaOrdenBodega({
-                    bodegaEmail: o.bodegaEmail,
-                    bodegaNombre: o.bodegaNombre,
-                    order: {
-                        moneda: o.moneda, subtotal: o.subtotal, accept_token: o.acceptToken,
-                        comision_pct_aplicada: o.comisionPct, comision_monto: o.comisionMonto,
-                        shipping_address: shipping.address, shipping_country: shipping.country || 'United Kingdom'
-                    },
-                    items: o.items
+        // IMPORTANTE — acá cambia el flujo respecto de antes: ya NO se le avisa nada a
+        // la bodega en este punto. Primero el comprador tiene que pagar la "reserva"
+        // (nuestra comisión del 12%, cobrada directo por Mendoza Reserve vía Revolut).
+        // Recién cuando Revolut confirma ese pago (webhookRevolut más abajo) se le manda
+        // el pedido a la/las bodega/s por email. Así Mendoza Reserve nunca depende de que
+        // la bodega le pague después, y nunca toca la plata de la bodega tampoco.
+        //
+        // Si el carrito mezcla bodegas que facturan en distinta moneda, se genera una
+        // reserva (y un checkout de Revolut) por cada moneda — el comprador paga cada
+        // una por separado. Es un caso raro (hoy casi todo el catálogo es USD), pero no
+        // rompe si pasa.
+        const porMoneda = {};
+        for (const o of ordenesCreadas) {
+            if (!porMoneda[o.moneda]) porMoneda[o.moneda] = [];
+            porMoneda[o.moneda].push(o);
+        }
+
+        const trackingUrl = `${(process.env.SITE_URL || 'https://mendoza-reserve.co.uk').replace(/\/$/, '')}/seguimiento/${cartGroupId}?email=${encodeURIComponent(buyer.email)}`;
+        const reservasCreadas = [];
+
+        for (const [moneda, ordenesDeEstaMoneda] of Object.entries(porMoneda)) {
+            const montoReserva = redondear2(
+                ordenesDeEstaMoneda.reduce((acc, o) => acc + Number(o.comisionMonto), 0)
+            );
+
+            let revolutOrder;
+            try {
+                revolutOrder = await crearOrdenReserva({
+                    monto: montoReserva,
+                    moneda,
+                    descripcion: `Reserva Mendoza Reserve — pedido ${cartGroupId}`,
+                    referencia: cartGroupId,
+                    redirectUrl: trackingUrl
                 });
+            } catch (revolutError) {
+                // El pedido YA está creado y comprometido en la base — no lo revertimos
+                // por esto. Lo que hacemos es devolverle al frontend el error puntual de
+                // esta moneda para que pueda avisarle al comprador y reintentar el pago
+                // (la orden queda visible en el admin con la reserva en estado 'pendiente').
+                console.error(`❌ Error creando la orden de Revolut para la reserva en ${moneda}:`, revolutError.message);
+                reservasCreadas.push({ moneda, monto: montoReserva, error: revolutError.message });
+                continue;
             }
-            await emailConfirmacionComprador({
-                buyerEmail: buyer.email, buyerName: buyer.name, cartGroupId, ordenesCreadas
-            });
+
+            await connection.query(
+                `INSERT INTO reservas (cart_group_id, monto, moneda, estado, revolut_order_id, checkout_url)
+                 VALUES (?, ?, ?, 'pendiente', ?, ?)`,
+                [cartGroupId, montoReserva, moneda, revolutOrder.id, revolutOrder.checkoutUrl]
+            );
+
+            reservasCreadas.push({ moneda, monto: montoReserva, checkoutUrl: revolutOrder.checkoutUrl });
+        }
+
+        // Email de respaldo con el link de pago, por si el redirect automático del
+        // frontend al checkout de Revolut no le funciona (bloqueador de pop-ups, etc.)
+        try {
+            for (const r of reservasCreadas) {
+                if (r.checkoutUrl) {
+                    await emailReservaPendiente({
+                        buyerEmail: buyer.email, buyerName: buyer.name,
+                        checkoutUrl: r.checkoutUrl, monto: r.monto, moneda: r.moneda
+                    });
+                }
+            }
         } catch (emailError) {
-            console.error('Error enviando emails de la orden (no afecta la compra):', emailError.message);
+            console.error('Error enviando el email de reserva pendiente (no afecta la compra):', emailError.message);
         }
 
         res.status(201).json({
             success: true,
             cartGroupId,
             orders: ordenesCreadas.map((o) => ({ orderId: o.orderId, bodegaId: o.bodegaId, bodegaNombre: o.bodegaNombre, subtotal: o.subtotal })),
-            msg: 'Pedido generado con éxito'
+            reservas: reservasCreadas,
+            msg: 'Pedido generado — falta completar el pago de la reserva para que se le avise a la/las bodega/s'
         });
     } catch (error) {
         if (connection) await connection.rollback();
@@ -304,6 +354,19 @@ exports.respondToOrder = async (req, res) => {
             [nuevoEstado, notas_bodega || null, order.id]
         );
 
+        // Si la bodega rechaza el pedido, se le devuelve al comprador la parte de la
+        // reserva que le correspondía a ESTA bodega (no toda la reserva del carrito,
+        // si el comprador había pedido a más de una bodega en el mismo checkout).
+        if (action === 'rechazar') {
+            try {
+                await reembolsarPorRechazo(order);
+            } catch (refundError) {
+                // Esto no debe bloquear la respuesta a la bodega, pero queda bien logueado
+                // porque implica plata real que hay que revisar y devolver a mano si falló.
+                console.error(`❌ No se pudo reembolsar automáticamente la reserva de la orden ${order.id}:`, refundError.message);
+            }
+        }
+
         try {
             await emailRespuestaBodega({
                 buyerEmail: order.buyer_email, buyerName: order.buyer_name, bodegaNombre: order.bodega_nombre,
@@ -318,6 +381,124 @@ exports.respondToOrder = async (req, res) => {
     } catch (error) {
         console.error('Error en respondToOrder:', error.message);
         res.status(500).json({ error: 'Error al actualizar el pedido' });
+    }
+};
+
+// Reembolsa, vía Revolut, la porción de la reserva que le correspondía a la bodega
+// que acaba de rechazar un pedido. Se usa desde respondToOrder.
+async function reembolsarPorRechazo(order) {
+    const [reservaRows] = await db.query(
+        `SELECT * FROM reservas WHERE cart_group_id = ? AND moneda = ? AND estado IN ('pagada', 'parcialmente_reembolsada')
+         ORDER BY id DESC LIMIT 1`,
+        [order.cart_group_id, order.moneda]
+    );
+    const reserva = reservaRows[0];
+    if (!reserva) {
+        console.warn(`⚠️ La orden ${order.id} se rechazó pero no se encontró una reserva pagada para reembolsar (cart_group_id ${order.cart_group_id}, moneda ${order.moneda})`);
+        return;
+    }
+
+    const montoAReembolsar = redondear2(order.comision_monto);
+    const refund = await reembolsarOrden({
+        revolutOrderId: reserva.revolut_order_id,
+        monto: montoAReembolsar,
+        moneda: reserva.moneda,
+        descripcion: `Reembolso — la bodega rechazó el pedido #${order.id}`
+    });
+
+    const nuevoReembolsado = redondear2(Number(reserva.reembolsado_monto) + montoAReembolsar);
+    const nuevoEstadoReserva = nuevoReembolsado >= Number(reserva.monto) ? 'reembolsada' : 'parcialmente_reembolsada';
+    await db.query(
+        `UPDATE reservas SET reembolsado_monto = ?, estado = ? WHERE id = ?`,
+        [nuevoReembolsado, nuevoEstadoReserva, reserva.id]
+    );
+    console.log(`↩️  Reembolsados ${reserva.moneda} ${montoAReembolsar} al comprador por el rechazo de la orden ${order.id} (reembolso Revolut: ${refund.id})`);
+}
+
+// Cuando Revolut confirma que la reserva se pagó, recién ahí se le manda el pedido
+// a la/las bodega/s correspondientes (las de esa misma moneda, por si el carrito
+// tenía más de una y cada una paga su reserva por separado).
+async function marcarReservaPagada(revolutOrderId) {
+    const [reservaRows] = await db.query(`SELECT * FROM reservas WHERE revolut_order_id = ?`, [revolutOrderId]);
+    if (reservaRows.length === 0) {
+        console.warn(`⚠️ Webhook ORDER_COMPLETED de una orden de Revolut que no tenemos registrada: ${revolutOrderId}`);
+        return;
+    }
+    const reserva = reservaRows[0];
+    if (reserva.estado === 'pagada') return; // idempotencia: Revolut puede reenviar el mismo evento
+
+    await db.query(`UPDATE reservas SET estado = 'pagada', paid_at = NOW() WHERE id = ?`, [reserva.id]);
+
+    const [ordenes] = await db.query(
+        `SELECT o.*, b.nombre AS bodega_nombre, b.email AS bodega_email
+         FROM orders o JOIN bodegas b ON b.id = o.bodega_id
+         WHERE o.cart_group_id = ? AND o.moneda = ?`,
+        [reserva.cart_group_id, reserva.moneda]
+    );
+
+    for (const orden of ordenes) {
+        const [items] = await db.query(
+            `SELECT oi.cantidad, oi.precio_unitario, v.nombre AS vino_nombre FROM order_items oi
+             JOIN vinos v ON v.id = oi.vino_id WHERE oi.order_id = ?`,
+            [orden.id]
+        );
+        try {
+            await emailNuevaOrdenBodega({ bodegaEmail: orden.bodega_email, bodegaNombre: orden.bodega_nombre, order: orden, items });
+        } catch (e) {
+            console.error(`Error enviando email a la bodega ${orden.bodega_id} tras pago de reserva (orden ${orden.id}):`, e.message);
+        }
+    }
+
+    if (ordenes.length > 0) {
+        try {
+            await emailConfirmacionComprador({
+                buyerEmail: ordenes[0].buyer_email,
+                buyerName: ordenes[0].buyer_name,
+                cartGroupId: reserva.cart_group_id,
+                ordenesCreadas: ordenes.map((o) => ({ bodegaNombre: o.bodega_nombre, subtotal: o.subtotal }))
+            });
+        } catch (e) {
+            console.error('Error enviando confirmación al comprador tras pago de reserva:', e.message);
+        }
+    }
+}
+
+/**
+ * Webhook público de Revolut — Mendoza Reserve se entera acá de que el comprador
+ * efectivamente pagó (o falló al pagar) la reserva.
+ *
+ * OJO: esta ruta se registra en index.js con express.raw() en vez del
+ * express.json() global, porque la verificación de firma necesita el body
+ * CRUDO tal cual llegó, no ya parseado — por eso acá `req.body` es un Buffer.
+ */
+exports.webhookRevolut = async (req, res) => {
+    try {
+        const { valido, motivo } = verificarFirmaWebhook({
+            rawBody: req.body,
+            signatureHeader: req.headers['revolut-signature'],
+            timestampHeader: req.headers['revolut-request-timestamp'],
+            signingSecret: process.env.REVOLUT_WEBHOOK_SECRET
+        });
+
+        if (!valido) {
+            console.warn('⚠️ Webhook de Revolut rechazado:', motivo);
+            return res.status(401).json({ error: 'Firma inválida' });
+        }
+
+        const evento = JSON.parse(req.body.toString('utf8'));
+
+        if (evento.event === 'ORDER_COMPLETED') {
+            await marcarReservaPagada(evento.order_id);
+        } else if (evento.event === 'ORDER_PAYMENT_DECLINED' || evento.event === 'ORDER_CANCELLED') {
+            await db.query(`UPDATE reservas SET estado = 'fallida' WHERE revolut_order_id = ? AND estado = 'pendiente'`, [evento.order_id]);
+        }
+        // Cualquier otro evento (ej. de reembolsos que iniciamos nosotros mismos) se ignora
+        // silenciosamente — no necesitamos reaccionar a esos acá.
+
+        res.json({ received: true });
+    } catch (error) {
+        console.error('Error procesando webhook de Revolut:', error.message);
+        res.status(500).json({ error: 'Error procesando el webhook' });
     }
 };
 
