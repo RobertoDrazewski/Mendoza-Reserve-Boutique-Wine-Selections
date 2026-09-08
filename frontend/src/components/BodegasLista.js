@@ -24,7 +24,9 @@ const BodegasLista = () => {
             phone: 'Tel:',
             address: 'Dir:',
             allZones: 'Todas las zonas',
-            empty: 'Todavía no hay bodegas activas para mostrar. Estamos incorporando nuevos productores.'
+            empty: 'Todavía no hay bodegas activas para mostrar. Estamos incorporando nuevos productores.',
+            comingSoon: 'Próximamente',
+            comingSoonNote: 'Estamos en conversaciones con esta bodega.'
         },
         en: {
             title: 'Our Wineries',
@@ -35,7 +37,9 @@ const BodegasLista = () => {
             phone: 'Phone:',
             address: 'Addr:',
             allZones: 'All zones',
-            empty: 'No active wineries to show yet. We are onboarding new producers.'
+            empty: 'No active wineries to show yet. We are onboarding new producers.',
+            comingSoon: 'Coming soon',
+            comingSoonNote: "We're currently in talks with this winery."
         }
     };
     const currentT = t[lang] || t['es'];
@@ -108,8 +112,12 @@ const BodegasLista = () => {
                 <div className="bodegas-grid">
                     {visibles.map((item) => {
                         const bio = lang === 'en' ? (item.descripcion_en || item.descripcion) : item.descripcion;
+                        const esActiva = item.estado === 'activa';
                         return (
-                        <div key={item.id} className="bodega-card">
+                        <div key={item.id} className={`bodega-card${esActiva ? '' : ' bodega-card-pending'}`}>
+                            {!esActiva && (
+                                <span className="bodega-badge-pending">{currentT.comingSoon}</span>
+                            )}
                             <div className="bodega-image-wrapper">
                                 {item.imagen ? (
                                     <img
@@ -131,13 +139,19 @@ const BodegasLista = () => {
                                 <h3 className="bodega-name">{item.nombre}</h3>
                                 {item.zona && <p className="bodega-zona">{item.zona}{item.subzona ? ` · ${item.subzona}` : ''}</p>}
                                 {bio && <p className="bodega-bio-snippet">{bio}</p>}
-                                <div className="contact-details">
-                                    {item.telefono && <p><strong>{currentT.phone}</strong> {item.telefono}</p>}
-                                    {item.direccion && <p><strong>{currentT.address}</strong> {item.direccion}</p>}
-                                </div>
-                                <Link to={`/bodega/${item.slug || item.id}`} className="btn-conocer">
-                                    {currentT.viewMore}
-                                </Link>
+                                {esActiva ? (
+                                    <>
+                                        <div className="contact-details">
+                                            {item.telefono && <p><strong>{currentT.phone}</strong> {item.telefono}</p>}
+                                            {item.direccion && <p><strong>{currentT.address}</strong> {item.direccion}</p>}
+                                        </div>
+                                        <Link to={`/bodega/${item.slug || item.id}`} className="btn-conocer">
+                                            {currentT.viewMore}
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <p className="bodega-pending-note">{currentT.comingSoonNote}</p>
+                                )}
                             </div>
                         </div>
                         );

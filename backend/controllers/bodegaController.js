@@ -20,13 +20,32 @@ const CAMPOS_PUBLICOS = `
     sitio_web, descripcion, descripcion_en, logo_url, imagen, estado, fecha_alta
 `;
 
-// 1. Listado PÚBLICO: sólo bodegas activas (lo que ve el comprador en UK)
+// 1. Listado PÚBLICO: bodegas activas + las que están en proceso de alta
+// (pendiente_contacto/contactada), estas últimas mostradas como "próximamente"
+// en el frontend (más transparentes, sin botón para entrar al detalle). Las
+// 'inactiva'/'rechazada' siguen sin aparecer nunca en público.
+// Para las que todavía no están activas, no se exponen datos de contacto
+// directo (teléfono/whatsapp/email/dirección) ni sitio web — todavía estamos
+// negociando con ellas y ese contacto pasa por Roberto, no por la web pública.
 exports.getAllBodegas = async (req, res) => {
     try {
         const [rows] = await db.query(
-            `SELECT ${CAMPOS_PUBLICOS} FROM bodegas WHERE estado = 'activa' ORDER BY nombre ASC`
+            `SELECT ${CAMPOS_PUBLICOS} FROM bodegas
+             WHERE estado IN ('activa', 'pendiente_contacto', 'contactada')
+             ORDER BY (estado = 'activa') DESC, nombre ASC`
         );
-        res.json(rows);
+        const publicas = rows.map((b) => {
+            if (b.estado === 'activa') return b;
+            return {
+                ...b,
+                telefono: null,
+                whatsapp: null,
+                email: null,
+                direccion: null,
+                sitio_web: null,
+            };
+        });
+        res.json(publicas);
     } catch (error) {
         console.error('Error en getAllBodegas:', error.message);
         res.status(500).json({ error: 'Error al obtener bodegas' });

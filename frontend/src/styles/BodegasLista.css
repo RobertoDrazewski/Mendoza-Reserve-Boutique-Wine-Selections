@@ -210,6 +210,46 @@
     box-shadow: 0 20px 40px rgba(61, 18, 25, 0.16);
 }
 
+/* --- Bodegas en proceso de alta (pendiente_contacto/contactada): se
+   muestran más "apagadas" que las activas, con una cinta "Próximamente" y
+   sin botón para entrar al detalle (todavía no tienen catálogo público). */
+.bodega-card-pending {
+    opacity: 0.55;
+    filter: grayscale(25%);
+}
+
+.bodega-card-pending:hover {
+    opacity: 0.8;
+    transform: none;
+    border-color: #ecdfc0;
+    box-shadow: 0 10px 26px rgba(61, 18, 25, 0.06);
+}
+
+.bodega-badge-pending {
+    position: absolute;
+    top: 16px;
+    right: -34px;
+    z-index: 2;
+    background: #a63a43;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 40px;
+    transform: rotate(40deg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.bodega-pending-note {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: #999;
+    margin: 0;
+}
+
 /* --- NUEVO: Contenedor de Imagen de Bodega --- */
 .bodega-image-wrapper {
     width: 100%;
