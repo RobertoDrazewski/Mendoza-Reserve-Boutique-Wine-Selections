@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes, FaUser, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Navbar.css';
@@ -153,6 +153,20 @@ const Navbar = () => {
                             <Link to={{ pathname: '/', hash: '#registro' }} className="auth-link-btn">{c.registro}</Link>
                         </div>
                     )}
+
+                    <div className="auth-mobile">
+                        <button type="button" className="auth-mobile__btn auth-mobile__lang" onClick={() => changeLanguage(lang === 'es' ? 'en' : 'es')} aria-label={lang === 'es' ? 'English' : 'Español'}>
+                            {lang === 'es' ? 'EN' : 'ES'}
+                        </button>
+                        {user ? (
+                            <button type="button" className="auth-mobile__btn" onClick={handleLogout} aria-label={c.logout} title={c.logout}><FaSignOutAlt /></button>
+                        ) : (
+                            <>
+                                <Link to="/login" className="auth-mobile__btn" aria-label={c.login} title={c.login}><FaUser /></Link>
+                                <Link to={{ pathname: '/', hash: '#registro' }} className="auth-mobile__btn" aria-label={c.registro} title={c.registro}><FaUserPlus /></Link>
+                            </>
+                        )}
+                    </div>
 
                     <button type="button" className="navbar-burger" aria-label={c.menu} aria-expanded={open} onClick={() => setOpen((v) => !v)}>
                         {open ? <FaTimes /> : <FaBars />}
