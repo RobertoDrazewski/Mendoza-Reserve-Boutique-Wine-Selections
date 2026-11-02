@@ -110,7 +110,7 @@ const MisPedidos = () => {
     };
 
     return (
-        <div className="tracking-page" style={{ backgroundImage: "url('/images/historia.JPG')" }}>
+        <div className="tracking-page">
             <div className="tracking-hero-inner">
                 <h1>{t.title}</h1>
             </div>

@@ -1,0 +1,159 @@
+/* ===========================================================================
+   Páginas internas (Carrito, Seguimiento, Mis pedidos, Detalle de bodega,
+   Respuesta de la bodega) con el mismo lenguaje que el Home: vidrio translúcido
+   flotando sobre el video de fondo, texto claro y detalles dorados.
+   Se importa al final de App.js, así que pisa a los CSS de cada página.
+   =========================================================================== */
+.main-content {
+  --g-gold: #e3cd98;
+  --g-gold-d: #c9a45c;
+  --g-cream: #f4ecdd;
+  --g-muted: #d9c8bd;
+}
+
+/* Vidrio común */
+.main-content .carrito-container .cart-bodega-group,
+.main-content .carrito-container .checkout-form,
+.main-content .tracking-order-card,
+.main-content .tracking-form,
+.main-content .etiqueta-central,
+.main-content .vino-card-mini {
+  background: linear-gradient(145deg, rgba(48, 16, 26, 0.6), rgba(24, 8, 14, 0.52));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(227, 205, 152, 0.26);
+  border-radius: 22px;
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: var(--g-cream);
+}
+
+.mr-lite .main-content .carrito-container .cart-bodega-group,
+.mr-lite .main-content .carrito-container .checkout-form,
+.mr-lite .main-content .tracking-order-card,
+.mr-lite .main-content .tracking-form,
+.mr-lite .main-content .etiqueta-central,
+.mr-lite .main-content .vino-card-mini {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: linear-gradient(145deg, rgba(40, 13, 22, 0.8), rgba(22, 7, 12, 0.74));
+}
+
+/* Aparición suave al entrar */
+.main-content .carrito-container,
+.main-content .tracking-hero-inner,
+.main-content .tracking-container,
+.main-content .detalle-page-inner {
+  animation: glass-in 0.9s cubic-bezier(.2, .7, .2, 1) both;
+}
+@keyframes glass-in { from { opacity: 0; transform: translateY(26px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+/* ---------------------------------------------------------------- Carrito */
+.main-content .carrito-wrapper { background: transparent; }
+.main-content .carrito-container h1,
+.main-content .carrito-container h2,
+.main-content .carrito-container h3,
+.main-content .carrito-title { color: var(--g-cream); text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55); }
+.main-content .carrito-container .cart-bodega-heading { color: var(--g-gold); border-bottom: 1px solid rgba(227, 205, 152, 0.45); text-shadow: none; }
+.main-content .carrito-container p,
+.main-content .carrito-container .cart-bodega-subtotal { color: var(--g-muted); }
+.main-content .carrito-container .cart-note { color: var(--g-muted); }
+.main-content .carrito-container .cart-item-row { border-bottom: 1px solid rgba(227, 205, 152, 0.16); }
+.main-content .carrito-container .cart-item-img-container { background: rgba(255, 255, 255, 0.92); border-radius: 10px; padding: 4px; }
+.main-content .carrito-container .cart-item-info h3 { color: var(--g-cream); text-shadow: none; }
+.main-content .carrito-container .unit-price { color: var(--g-muted); }
+.main-content .carrito-container .cart-item-actions button { background: rgba(8, 2, 5, 0.4); color: var(--g-cream); border: 1px solid rgba(227, 205, 152, 0.4); }
+.main-content .carrito-container .cart-item-actions button:hover { background: var(--g-gold); color: #2a0d14; border-color: var(--g-gold); }
+.main-content .carrito-container .qty-number,
+.main-content .carrito-container .cart-item-subtotal { color: var(--g-cream); }
+.main-content .carrito-container .btn-remove-item { color: var(--g-muted); }
+.main-content .carrito-container .btn-remove-item:hover { color: #ffb4b4; }
+.main-content .carrito-container .btn-clear-cart { background: rgba(8, 2, 5, 0.35); color: var(--g-muted); border: 1px solid rgba(227, 205, 152, 0.35); border-radius: 999px; }
+.main-content .carrito-container .btn-clear-cart:hover { color: #ffb4b4; border-color: #ffb4b4; }
+.main-content .carrito-container .total-row h3 { color: var(--g-gold); }
+.main-content .carrito-container .total-row span { color: var(--g-muted); }
+.main-content .carrito-container .checkout-form h3 { color: var(--g-gold); }
+.main-content .carrito-container .checkout-error { background: rgba(120, 30, 40, 0.5); color: #ffd0d0; border: 1px solid rgba(255, 180, 180, 0.3); border-radius: 12px; }
+.main-content .carrito-container .checkout-grid label { color: var(--g-gold); font-weight: 600; letter-spacing: 0.12em; font-size: 0.7rem; }
+.main-content .carrito-container .checkout-grid input,
+.main-content .carrito-container .checkout-grid textarea { background: rgba(8, 2, 5, 0.42); color: var(--g-cream); border: 1px solid rgba(227, 205, 152, 0.28); border-radius: 12px; }
+.main-content .carrito-container .checkout-grid input:focus,
+.main-content .carrito-container .checkout-grid textarea:focus { border-color: var(--g-gold); }
+.main-content .carrito-container .btn-checkout-final,
+.main-content .carrito-container .btn-primary {
+  background: linear-gradient(135deg, #e3cd98, #c9a45c); color: #2a0d14; border: 1px solid var(--g-gold);
+  border-radius: 999px; letter-spacing: 0.14em; font-weight: 700;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+.main-content .carrito-container .btn-checkout-final:hover,
+.main-content .carrito-container .btn-primary:hover { background: linear-gradient(135deg, #e3cd98, #c9a45c); transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 14px 30px -12px rgba(227, 205, 152, 0.6); }
+.main-content .carrito-container .carrito-vacio { color: var(--g-cream); text-align: center; }
+
+/* ------------------------------------------- Seguimiento / Mis pedidos / Bodega responde */
+.main-content .tracking-page { background: transparent !important; }
+.main-content .tracking-page::before { display: none; }
+.main-content .tracking-hero-inner h1 { color: var(--g-cream); }
+.main-content .tracking-subtitle { color: var(--g-muted); }
+.main-content .tracking-form label { color: var(--g-gold); }
+.main-content .tracking-form input { background: rgba(8, 2, 5, 0.42); color: var(--g-cream); border: 1px solid rgba(227, 205, 152, 0.28); }
+.main-content .tracking-form input::placeholder { color: rgba(217, 200, 189, 0.55); }
+.main-content .tracking-form input:focus { border-color: var(--g-gold); box-shadow: 0 0 0 4px rgba(227, 205, 152, 0.12); }
+.main-content .tracking-form button,
+.main-content .tracking-order-card .btn-primary {
+  background: linear-gradient(135deg, #e3cd98, #c9a45c); color: #2a0d14; border: 1px solid var(--g-gold);
+  border-radius: 999px; font-weight: 700; letter-spacing: 0.12em; padding: 11px 24px; text-transform: uppercase; font-size: 0.74rem; cursor: pointer;
+}
+.main-content .tracking-form button:hover,
+.main-content .tracking-order-card .btn-primary:hover { background: linear-gradient(135deg, #e3cd98, #c9a45c); filter: brightness(1.06); box-shadow: 0 14px 30px -12px rgba(227, 205, 152, 0.6); }
+.main-content .tracking-container > p { color: var(--g-cream); text-align: center; text-shadow: 0 1px 14px rgba(0, 0, 0, 0.6); }
+.main-content .tracking-error { background: rgba(120, 30, 40, 0.5); color: #ffd0d0; border: 1px solid rgba(255, 180, 180, 0.3); }
+.main-content .tracking-order-card:hover { border-color: rgba(227, 205, 152, 0.5); box-shadow: 0 30px 70px -26px rgba(0, 0, 0, 0.8); }
+.main-content .tracking-order-header h3 { color: var(--g-cream); }
+.main-content .tracking-items,
+.main-content .tracking-shipment p { color: var(--g-muted); }
+.main-content .tracking-subtotal { color: var(--g-cream); }
+.main-content .tracking-shipment { border-top: 1px solid rgba(227, 205, 152, 0.2); }
+.main-content .tracking-shipment h4 { color: var(--g-gold); }
+.main-content .tracking-shipment a { color: var(--g-gold); }
+.main-content .no-shipment { color: var(--g-muted); }
+.main-content .estado-badge { background: rgba(255, 255, 255, 0.12); color: var(--g-cream); border: 1px solid rgba(227, 205, 152, 0.3); }
+.main-content .estado-confirmada, .main-content .estado-enviada, .main-content .estado-en_transito, .main-content .estado-entregada { background: rgba(60, 140, 80, 0.3); color: #b8f0c4; border-color: rgba(120, 220, 150, 0.4); }
+.main-content .estado-cancelada { background: rgba(160, 50, 60, 0.35); color: #ffd0d0; border-color: rgba(255, 150, 150, 0.4); }
+.main-content .estado-pendiente_bodega { background: rgba(201, 164, 92, 0.25); color: var(--g-gold); border-color: rgba(227, 205, 152, 0.45); }
+.main-content .wo-comision { color: var(--g-muted); }
+.main-content .wo-buyer { background: rgba(8, 2, 5, 0.35); border: 1px solid rgba(227, 205, 152, 0.2); border-radius: 14px; }
+.main-content .wo-buyer h4 { color: var(--g-gold); }
+.main-content .wo-buyer p { color: var(--g-muted); }
+.main-content .wo-actions textarea { background: rgba(8, 2, 5, 0.42); color: var(--g-cream); border: 1px solid rgba(227, 205, 152, 0.28); border-radius: 12px; }
+.main-content .wo-btn-confirm { background: #2a7a3f; color: #fff; border-radius: 999px; }
+.main-content .wo-btn-reject { background: rgba(8, 2, 5, 0.35); color: #ffb4b4; border: 1px solid rgba(255, 180, 180, 0.5); border-radius: 999px; }
+.main-content .wo-btn-reject:hover { background: rgba(160, 50, 60, 0.35); }
+.main-content .wo-ya-respondido, .main-content .wo-resultado { background: rgba(201, 164, 92, 0.2); color: var(--g-gold); border-radius: 12px; }
+
+/* ----------------------------------------------------------- Detalle de bodega */
+.main-content .detalle-page-wrapper { background: transparent; }
+.main-content .back-link { color: var(--g-gold); }
+.main-content .back-link:hover { color: #fff; }
+.main-content .etiqueta-central { padding: 54px 40px; }
+.main-content .logo-container { background: rgba(255, 255, 255, 0.94); border-radius: 22px; padding: 16px; box-sizing: border-box; box-shadow: 0 14px 40px -14px rgba(0, 0, 0, 0.7); }
+.main-content .bodega-title { color: var(--g-cream); text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55); }
+.main-content .divider-dorado { background: linear-gradient(90deg, transparent, var(--g-gold-d), transparent); height: 1px; width: 160px; }
+.main-content .descripcion-texto { color: var(--g-muted); }
+.main-content .info-grid { border-top: 1px solid rgba(227, 205, 152, 0.2); }
+.main-content .info-item span { color: var(--g-gold); }
+.main-content .info-item p { color: var(--g-cream); }
+.main-content .web-link a { color: var(--g-gold); }
+.main-content .catalogo-bodega h2 { color: var(--g-cream); text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55); }
+.main-content .no-vinos { color: var(--g-muted); }
+.main-content .vino-card-mini { overflow: hidden; border-radius: 18px; }
+.main-content .vino-card-mini:hover { border-color: rgba(227, 205, 152, 0.55); }
+.main-content .vino-image-mini { background: rgba(255, 255, 255, 0.92); }
+.main-content .vino-info-mini h4 { color: var(--g-cream); }
+.main-content .vino-meta { color: var(--g-muted); }
+.main-content .vino-formato { color: var(--g-gold); }
+.main-content .vino-price-mini { color: var(--g-cream); }
+.main-content .btn-add-mini { background: linear-gradient(135deg, #e3cd98, #c9a45c); color: #2a0d14; border: 0; border-radius: 999px; font-weight: 700; padding: 9px 14px; }
+.main-content .btn-add-mini:hover { background: linear-gradient(135deg, #e3cd98, #c9a45c); filter: brightness(1.06); color: #2a0d14; }
+
+@media (max-width: 600px) {
+  .main-content .etiqueta-central { padding: 36px 20px; }
+}

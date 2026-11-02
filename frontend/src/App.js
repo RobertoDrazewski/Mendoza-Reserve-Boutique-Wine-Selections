@@ -20,6 +20,7 @@ import VideoBackdrop from './components/VideoBackdrop';
 import FloatingCart from './components/FloatingCart';
 
 import './App.css';
+import './styles/GlassPages.css';
 
 function App() {
   return (
