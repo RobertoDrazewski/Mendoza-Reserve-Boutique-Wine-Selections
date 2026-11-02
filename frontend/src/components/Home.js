@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import '../styles/Home.css';
 
+// La portada real es ahora la landing 3D con scroll (frontend/public/landing).
+// Es una página estática independiente (video aéreo + mapa + listado), así que
+// entramos con replace() para que el botón "atrás" no quede atrapado en un bucle.
+// Si por algún motivo la landing no está (p. ej. falta copiar la carpeta), el
+// hero sencillo de abajo sigue funcionando como respaldo.
+const LANDING_URL = '/landing/index.html';
+
 const Home = () => {
   const { lang } = useLanguage();
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(LANDING_URL, { method: 'HEAD' })
+      .then((res) => {
+        const tipo = res.headers.get('content-type') || '';
+        if (!cancelled && res.ok && tipo.includes('text/html')) {
+          window.location.replace(LANDING_URL);
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   const t = {
     es: {
@@ -21,14 +41,9 @@ const Home = () => {
 
   const currentT = t[lang] || t['es'];
 
-  // USAMOS LA RUTA DE LA CARPETA PUBLIC
-  const heroStyle = {
-    backgroundImage: "url('/images/home.JPG')"
-  };
-
   return (
     <div className="home-container">
-      <section className="hero" style={heroStyle}>
+      <section className="hero">
         <div className="hero-content">
           <img
             src="/images/mendoza-reserve-logo-gold.png"

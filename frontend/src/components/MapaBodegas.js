@@ -224,18 +224,18 @@ const MapaBodegas = () => {
     }, []);
 
     if (loading) return (
-        <div className="status-message" style={{ backgroundImage: "url('/images/home.JPG')" }}>
+        <div className="status-message">
             <span className="status-message-text">{currentT.loading}</span>
         </div>
     );
     if (error) return (
-        <div className="status-message error" style={{ backgroundImage: "url('/images/home.JPG')" }}>
+        <div className="status-message error">
             <span className="status-message-text">{error}</span>
         </div>
     );
 
     return (
-        <div className="mapa-page" style={{ backgroundImage: "url('/images/home.JPG')" }}>
+        <div className="mapa-page">
             <div className="mapa-hero-inner">
                 <h1>{currentT.title}</h1>
                 <p className="mapa-subtitle">{currentT.subtitle}</p>

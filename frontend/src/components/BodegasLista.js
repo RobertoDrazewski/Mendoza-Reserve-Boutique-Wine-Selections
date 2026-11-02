@@ -70,18 +70,18 @@ const BodegasLista = () => {
     const visibles = zonaFiltro ? bodegas.filter((b) => b.zona === zonaFiltro) : bodegas;
 
     if (loading) return (
-        <div className="status-message" style={{ backgroundImage: "url('/images/fondo-historia.png')" }}>
+        <div className="status-message">
             <span className="status-message-text">{currentT.loading}</span>
         </div>
     );
     if (error) return (
-        <div className="status-message error" style={{ backgroundImage: "url('/images/fondo-historia.png')" }}>
+        <div className="status-message error">
             <span className="status-message-text">{error}</span>
         </div>
     );
 
     return (
-        <div className="bodegas-page" style={{ backgroundImage: "url('/images/fondo-historia.png')" }}>
+        <div className="bodegas-page">
             {/* La foto de fondo cubre toda la página (de punta a punta, hasta el
                 footer) con "background-attachment: fixed", así que su tamaño se
                 calcula contra la ventana y no contra el alto del contenido —

@@ -30,17 +30,9 @@ const Historia = () => {
 
   const t = content[lang] || content['es'];
 
-  // Solo la imagen va inline (es la única parte específica de esta página);
-  // el padding/layout vive en Historia.css como clase, así puede tener sus
-  // propios media queries para mobile — un valor de padding fijo en JS no
-  // podría adaptarse al navbar más chico del celular.
-  const sectionStyle = {
-    backgroundImage: "url('/images/bodegaAvion.PNG')",
-  };
-
   return (
     <div className="historia-page-pure-noscroll">
-      <section className="historia-hero-section" style={sectionStyle}>
+      <section className="historia-hero-section">
         <div className="historia-content-pure-noscroll">
           <header className="historia-header-pure-noscroll">
             <h1 className="historia-title-pure-noscroll">{t.title}</h1>

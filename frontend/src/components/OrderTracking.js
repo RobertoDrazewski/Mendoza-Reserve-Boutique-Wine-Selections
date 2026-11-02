@@ -87,7 +87,7 @@ const OrderTracking = () => {
     };
 
     return (
-        <div className="tracking-page" style={{ backgroundImage: "url('/images/historia.JPG')" }}>
+        <div className="tracking-page">
             {/* La foto de fondo cubre toda la página (de punta a punta, hasta el
                 footer) con "background-attachment: fixed", así que su tamaño se
                 calcula contra la ventana y no contra el alto del contenido —
