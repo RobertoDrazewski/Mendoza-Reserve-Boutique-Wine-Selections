@@ -33,13 +33,13 @@ const VideoBackdrop = () => {
     // Equipos modestos (pocos núcleos / poca RAM): menos resolución y sin efectos de desenfoque.
     const lite = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
     document.documentElement.classList.toggle('mr-lite', lite);
-    const TOTAL = mobile ? 84 : 150;
-    const DIR = mobile ? DIR_MOBILE : DIR_DESKTOP;
+    const light = mobile || lite; // cuadros de 960px: 3x menos memoria al decodificar
+    const TOTAL = light ? 84 : 150;
+    const DIR = light ? DIR_MOBILE : DIR_DESKTOP;
 
     const frames = new Array(TOTAL);   // imágenes descargadas (sólo el archivo comprimido)
-    const bitmaps = new Array(TOTAL);  // cuadros ya decodificados, sólo los cercanos al actual
-    const pending = {};
-    const RADIUS = lite ? 8 : 12;
+    const decoded = {};                // cuadros cercanos ya decodificados (sólo marcas, no guarda píxeles)
+    const RADIUS = lite ? 6 : 10;
     let current = 0;
     let target = 0;
     let progress = 0;
@@ -47,9 +47,8 @@ const VideoBackdrop = () => {
     let raf = null;
     let alive = true;
 
-    // Un cuadro está listo para dibujar si ya está decodificado (bitmap) o, al menos, descargado.
+    // Un cuadro está listo para dibujar si ya se descargó.
     const src = (i) => {
-      if (bitmaps[i]) return bitmaps[i];
       const img = frames[i];
       return img && img.complete && img.naturalWidth ? img : null;
     };
@@ -63,23 +62,16 @@ const VideoBackdrop = () => {
       return null;
     };
 
-    // Decodifica por adelantado los cuadros vecinos (en ambas direcciones) y libera los lejanos.
-    // Así, al subir y bajar el scroll nunca hay que decodificar un WebP "en el momento".
+    // Pide al navegador que decodifique por adelantado los cuadros vecinos (en ambas direcciones).
+    // No guardamos bitmaps propios: la memoria de píxeles la administra el navegador, así no se
+    // acumulan cientos de MB y la pestaña no se cae en equipos con poca memoria.
     const decodeOne = (i) => {
       const img = frames[i];
-      if (i < 0 || i >= TOTAL || bitmaps[i] || pending[i] || !img || !img.complete || !img.naturalWidth) return;
-      pending[i] = true;
-      createImageBitmap(img).then((bm) => {
-        pending[i] = false;
-        if (!alive || Math.abs(i - current) > RADIUS + 4) { bm.close(); return; }
-        bitmaps[i] = bm;
-      }).catch(() => { pending[i] = false; });
+      if (i < 0 || i >= TOTAL || decoded[i] || !img || !img.complete || !img.naturalWidth || !img.decode) return;
+      decoded[i] = true;
+      img.decode().catch(() => {}).then(() => { window.setTimeout(() => { decoded[i] = false; }, 4000); });
     };
     const warm = (idx) => {
-      if (typeof createImageBitmap === 'undefined') return;
-      for (let i = 0; i < TOTAL; i += 1) {
-        if (Math.abs(i - idx) > RADIUS + 4 && bitmaps[i]) { bitmaps[i].close(); bitmaps[i] = null; }
-      }
       for (let d = 0; d <= RADIUS; d += 1) {
         decodeOne(idx + d);
         decodeOne(idx - d);
@@ -95,7 +87,7 @@ const VideoBackdrop = () => {
       const s = Math.max(cw / iw, ch / ih) * (1 + 0.07 * progress); // empuje lento
       const w = iw * s;
       const h = ih * s;
-      ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+      try { ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h); } catch (e) { /* cuadro aún no listo */ }
     };
 
     const tick = () => {
@@ -179,7 +171,6 @@ const VideoBackdrop = () => {
 
     return () => {
       alive = false;
-      bitmaps.forEach((b) => { if (b) b.close(); });
       if (raf) cancelAnimationFrame(raf);
       if (ro) ro.disconnect();
       window.removeEventListener('scroll', refresh);
