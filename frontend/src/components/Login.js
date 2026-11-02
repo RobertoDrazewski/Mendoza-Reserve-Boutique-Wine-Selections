@@ -91,7 +91,7 @@ const Login = () => {
         <h1 className="login-title">{currentT.title}</h1>
         <p className="login-subtitle">{currentT.subtitle}</p>
 
-        {error && <p className="error-message" style={{ color: '#ff4d4d', textAlign: 'center', marginBottom: '10px' }}>{error}</p>}
+        {error && <p className="error-message" style={{ textAlign: 'center', marginBottom: '10px' }}>{error}</p>}
         
         <form onSubmit={handleSubmit} className="login-form">
           <div className="input-group">

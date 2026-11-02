@@ -1,132 +1,140 @@
-/* src/styles/Login.css */
+/* src/styles/Login.css
+   Login flotando sobre el video de fondo, con el mismo vidrio que el Registro del Home.
+   Todo va bajo .login-page para ganarle en especificidad a Register.css (comparten clases). */
 
 .login-page {
   width: 100%;
-  padding: 130px 20px 60px; /* el footer ya no es "fixed", no hace falta tanto aire abajo */
   min-height: 100vh;
-  background-color: #fdfaf6; /* Fondo crema muy sutil para resaltar la card blanca */
+  padding: 130px 20px 70px;
+  box-sizing: border-box;
+  background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.login-card {
-  background: #ffffff;
-  /* --- CAMBIO: Más compacto, igual que Contacto --- */
-  max-width: 420px; 
+.login-page .login-card {
+  max-width: 460px;
   width: 100%;
-  padding: 50px 40px;
-  /* --- CAMBIO: Bordes muy redondeados --- */
-  border-radius: 25px;
-  border: 1px solid rgba(212, 175, 55, 0.3); /* Dorado suave */
+  padding: 46px 42px;
+  box-sizing: border-box;
+  border-radius: 22px;
   text-align: center;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-  transition: all 0.4s ease;
+  background: linear-gradient(145deg, rgba(48, 16, 26, 0.6), rgba(24, 8, 14, 0.52));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(227, 205, 152, 0.26);
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: login-in 0.9s cubic-bezier(.2, .7, .2, 1) both;
 }
 
-.login-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
+@keyframes login-in {
+  from { opacity: 0; transform: scale(0.92) translateY(24px); }
+  to { opacity: 1; transform: none; }
 }
 
-.login-title {
+.login-page .login-title {
   font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-weight: 200;
-  font-size: 2.8rem;
-  color: #d4af37;
-  margin-bottom: 5px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 2.5rem;
+  color: #f4ecdd;
+  margin: 0 0 8px;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
 }
 
-.login-subtitle {
+.login-page .login-subtitle {
   font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
-  color: #a63a43;
-  margin-bottom: 35px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  font-weight: 400;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* Espaciado entre campos más ajustado */
-}
-
-.input-group input {
-  width: 100%;
-  padding: 14px 20px;
-  border: 1px solid #e0dcd0;
-  background-color: #fdfaf6;
-  /* --- CAMBIO: Inputs redondeados --- */
-  border-radius: 15px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  color: #333;
-  transition: all 0.3s ease;
-}
-
-.input-group input:focus {
-  outline: none;
-  border-color: #a63a43;
-  background-color: #ffffff;
-  box-shadow: 0 0 0 4px rgba(166, 58, 67, 0.05);
-}
-
-.btn-winery-auth {
-  padding: 16px;
-  background-color: #a63a43;
-  color: #ffffff;
-  border: none;
-  /* --- CAMBIO: Botón redondeado tipo cápsula --- */
-  border-radius: 50px;
+  font-size: 0.74rem;
+  color: #e3cd98;
+  margin: 0 0 32px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   font-weight: 600;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.4s ease;
-  margin-top: 15px;
 }
 
-.btn-winery-auth:hover {
-  background-color: #d4af37;
-  color: #000000;
-  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+.login-page .login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.login-footer {
-  margin-top: 30px;
+.login-page .input-group input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 20px;
+  border: 1px solid rgba(227, 205, 152, 0.28);
+  background-color: rgba(8, 2, 5, 0.42);
+  border-radius: 14px;
   font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  color: #888;
-  letter-spacing: 1px;
+  font-size: 0.98rem;
+  color: #f4ecdd;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.login-footer a {
-  color: #a63a43;
+.login-page .input-group input::placeholder { color: rgba(217, 200, 189, 0.6); }
+
+.login-page .input-group input:focus {
+  outline: none;
+  border-color: #e3cd98;
+  background-color: rgba(8, 2, 5, 0.55);
+  box-shadow: 0 0 0 4px rgba(227, 205, 152, 0.12);
+}
+
+/* El autocompletado de Chrome pinta los campos de blanco: lo mantenemos oscuro */
+.login-page .input-group input:-webkit-autofill {
+  -webkit-text-fill-color: #f4ecdd;
+  -webkit-box-shadow: 0 0 0 1000px rgba(24, 8, 14, 0.92) inset;
+  caret-color: #f4ecdd;
+}
+
+.login-page .btn-winery-auth {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #e3cd98;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #e3cd98, #c9a45c);
+  color: #2a0d14;
+  text-transform: uppercase;
+  font: 700 0.8rem 'Inter', sans-serif;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.login-page .btn-winery-auth:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 14px 30px -12px rgba(227, 205, 152, 0.6);
+  background: linear-gradient(135deg, #e3cd98, #c9a45c);
+  color: #2a0d14;
+}
+
+.login-page .login-footer {
+  margin: 28px 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #d9c8bd;
+  letter-spacing: 0.04em;
+}
+
+.login-page .login-footer a {
+  color: #e3cd98;
   text-decoration: none;
   font-weight: 700;
   text-transform: uppercase;
-  margin-left: 5px;
+  margin-left: 6px;
   border-bottom: 1px solid transparent;
   transition: all 0.3s;
 }
 
-.login-footer a:hover {
-  color: #d4af37;
-  border-bottom: 1px solid #d4af37;
-}
+.login-page .login-footer a:hover { color: #fff; border-bottom-color: #e3cd98; }
 
-/* --- Ajustes Móvil --- */
+.login-page .error-message { color: #ffb4b4 !important; font-size: 0.9rem; }
+
+.mr-lite .login-page .login-card { -webkit-backdrop-filter: none; backdrop-filter: none; background: linear-gradient(145deg, rgba(40, 13, 22, 0.8), rgba(22, 7, 12, 0.74)); }
+
 @media (max-width: 600px) {
-  .login-card {
-    max-width: 90%;
-    padding: 40px 25px;
-    border-radius: 20px;
-  }
-  
-  .login-title {
-    font-size: 2.2rem;
-  }
+  .login-page .login-card { padding: 36px 24px; border-radius: 20px; }
+  .login-page .login-title { font-size: 2.1rem; }
 }
