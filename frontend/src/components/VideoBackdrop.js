@@ -78,28 +78,45 @@ const VideoBackdrop = () => {
       }
     };
 
-    const draw = (idx) => {
-      const img = nearest(idx);
-      if (!img) return;
+    const paint = (img, scale) => {
       const { w: iw, h: ih } = dims(img);
       const cw = canvas.width;
       const ch = canvas.height;
-      const s = Math.max(cw / iw, ch / ih) * (1 + 0.07 * progress); // empuje lento
+      const s = Math.max(cw / iw, ch / ih) * scale;
       const w = iw * s;
       const h = ih * s;
       try { ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h); } catch (e) { /* cuadro aún no listo */ }
     };
 
+    // Entre dos cuadros reales se mezcla el siguiente con transparencia proporcional a la
+    // parte decimal de la posición: el recorrido se ve continuo, como video, sin más descargas.
+    const draw = (pos) => {
+      const i0 = clamp(Math.floor(pos), 0, TOTAL - 1);
+      const f = pos - i0;
+      const a = nearest(i0);
+      if (!a) return;
+      const scale = 1 + 0.07 * progress; // empuje lento
+      ctx.globalAlpha = 1;
+      paint(a, scale);
+      const b = i0 + 1 < TOTAL ? src(i0 + 1) : null;
+      if (b && f > 0.02) {
+        ctx.globalAlpha = f;
+        paint(b, scale);
+        ctx.globalAlpha = 1;
+      }
+    };
+
     const tick = () => {
       raf = null;
       if (!alive) return;
-      current += (target - current) * 0.15; // la inercia da el efecto de vuelo
+      current += (target - current) * 0.18; // la inercia da el efecto de vuelo
       if (Math.abs(target - current) < 0.01) current = target;
-      const idx = clamp(Math.round(current), 0, TOTAL - 1);
-      if (idx !== lastDrawn) {
-        draw(idx);
-        lastDrawn = idx;
-        warm(idx);
+      const pos = clamp(current, 0, TOTAL - 1);
+      const key = Math.round(pos * 8); // un repintado cada 1/8 de cuadro
+      if (key !== lastDrawn) {
+        draw(pos);
+        lastDrawn = key;
+        warm(Math.round(pos));
       }
       if (current !== target) schedule(); // eslint-disable-line no-use-before-define
     };
