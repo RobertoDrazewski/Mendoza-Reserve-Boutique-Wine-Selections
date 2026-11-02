@@ -1,224 +1,51 @@
-/* src/styles/Footer.css */
-
-/* El footer ya NO es "position: fixed" — vive en el flujo normal del layout
-   (.app-wrapper flex-column / .main-content flex:1, definido en App.css),
-   así que siempre queda al final de la página sin tapar contenido. */
-
+/* Pie fino y translúcido: deja ver el video detrás y alcanza justo para los logos. */
 .footer {
-    width: 100%;
-    background: linear-gradient(180deg, #4a161d 0%, #3d1219 100%);
-    color: #f3e9df;
-    /* Sin margin-top: en Home/Historia la imagen tiene que llegar justo hasta
-       acá, sin dejar ese filo crema de antes. */
-    margin-top: 0;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  background: rgba(20, 6, 10, 0.72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid rgba(201, 164, 92, 0.3);
+  color: #cfb9b0;
+  font-family: 'Inter', sans-serif;
 }
 
-.footer-top {
-    border-top: 3px solid #b8933a;
-    padding: 26px 40px 22px;
+.footer-inner {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
 }
 
-/* Una sola fila, de punta a punta: marca pegada al borde izquierdo,
-   Reino Unido centrado, Argentina pegada al borde derecho. Con
-   "justify-content: space-between" el espacio sobrante se reparte entre
-   los tres bloques en vez de apilarlos centrados en una columna angosta
-   (que es lo que hacía ver todo "muy centrado y muy alto"). */
-.footer-container {
-    max-width: 1240px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-}
+.footer-side { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.footer-brand-mark { width: 42px; height: 42px; border-radius: 10px; flex: 0 0 auto; }
+.footer-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.footer-text--right { text-align: right; align-items: flex-end; }
 
-.footer-col {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 0;
-    min-width: 0;
-}
-
-/* --- Columna de marca (izquierda) --- */
-.footer-brand {
-    flex: 1.5 1 0;
-    flex-direction: row;
-    align-items: center;
-    gap: 14px;
-    text-align: left;
-}
-
-.footer-brand-mark {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
-    flex-shrink: 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.35);
-}
-
-.footer-brand-name {
-    font-family: 'Playfair Display', 'Georgia', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.5px;
-}
-
-.footer-brand-sub {
-    font-size: 0.68rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #c9a15a;
-    margin-bottom: 6px;
-}
-
-.footer-tagline {
-    font-size: 0.78rem;
-    line-height: 1.5;
-    color: #d9c7bb;
-    max-width: 260px;
-}
-
-/* --- Columnas de contacto: Reino Unido (centro) / Argentina (derecha) --- */
-.footer-contact-col {
-    gap: 6px;
-    align-items: center;
-    text-align: center;
-}
-
-/* La de Argentina es la última columna del footer — pegada al borde derecho. */
-.footer-contact-col:last-child {
-    align-items: flex-end;
-    text-align: right;
-}
-
-.footer-contact-label {
-    font-size: 0.74rem;
-    color: #d9c7bb;
-}
-
-.footer-contact-line {
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    transition: color 0.25s ease;
-}
-
-.footer-contact-line svg {
-    color: #c9a15a;
-    font-size: 0.85rem;
-}
-
-.footer-contact-line:hover {
-    color: #c9a15a;
-}
-
-/* --- Barra inferior --- */
-.footer-bottom {
-    border-top: 1px solid rgba(255,255,255,0.12);
-    background-color: rgba(0,0,0,0.15);
-}
-
-.footer-bottom-inner {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 14px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 24px;
-    flex-wrap: wrap;
-}
-
-.footer-copy {
-    font-size: 0.76rem;
-    line-height: 1.6;
-    color: #c9b8ac;
-}
-
-.footer-owned-by {
-    color: #a98f7c;
-    font-style: italic;
-}
+.footer-copy, .footer-owned-by, .footer-collab { margin: 0; font-size: 0.7rem; line-height: 1.4; color: #cfb9b0; }
+.footer-collab { color: #e3cd98; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.68rem; }
 
 .footer-puma-credit {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 8px;
-    transition: background-color 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #cfb9b0;
+  font-size: 0.7rem;
+  margin-top: 2px;
+  transition: color 0.3s ease;
 }
+.footer-puma-credit:hover { color: #e3cd98; }
+.footer-puma-logo { height: 18px; width: auto; }
+.footer-puma-name { color: #e3cd98; }
+.footer-aquila-logo { height: 40px; width: auto; flex: 0 0 auto; border-radius: 6px; }
 
-.footer-puma-credit:hover {
-    background-color: rgba(201, 161, 90, 0.12);
-}
-
-.footer-designed-by {
-    font-size: 0.72rem;
-    color: #a98f7c;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.footer-puma-logo {
-    width: 44px;
-    height: 44px;
-    object-fit: contain;
-}
-
-.footer-puma-name {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #e4c98a;
-    letter-spacing: 0.3px;
-}
-
-/* --- Responsivo --- */
-@media (max-width: 700px) {
-    .footer-container {
-        flex-wrap: wrap;
-        gap: 24px 32px;
-    }
-    .footer-col {
-        flex: 1 1 45%;
-    }
-    .footer-brand {
-        flex: 1 1 100%;
-    }
-}
-
-@media (max-width: 600px) {
-    .footer-top {
-        padding: 32px 24px 26px;
-    }
-    .footer-container {
-        flex-direction: column;
-        gap: 28px;
-        text-align: center;
-    }
-    .footer-brand {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    .footer-tagline {
-        max-width: none;
-    }
-    .footer-contact-col,
-    .footer-contact-col:last-child {
-        align-items: center;
-        text-align: center;
-    }
-    .footer-bottom-inner {
-        flex-direction: column;
-        text-align: center;
-        padding: 18px 24px;
-    }
+@media (max-width: 800px) {
+  .footer-inner { flex-direction: column; align-items: flex-start; padding: 14px 18px; gap: 12px; }
+  .footer-side--right { flex-direction: row-reverse; }
+  .footer-text--right { text-align: left; align-items: flex-start; }
 }

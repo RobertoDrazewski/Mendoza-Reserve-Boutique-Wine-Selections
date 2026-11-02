@@ -1,94 +1,61 @@
 import React from 'react';
-import { FaPhoneAlt } from 'react-icons/fa';
 import { useLanguage } from '../context/LanguageContext';
 import '../styles/Footer.css';
 
+// Pie fino: izquierda = legales + crédito de Puma Code; derecha = alianza con Aquila Aerial
+// y derechos del video. Los datos de contacto viven ahora en la sección "Contacto" del Home.
 const Footer = () => {
   const { lang } = useLanguage();
   const year = new Date().getFullYear();
 
   const t = {
     es: {
-      tagline: 'Bodegas boutique independientes de Mendoza, directo al mercado británico.',
-      salesUK: 'Ventas — Reino Unido',
-      salesAR: 'Ventas — Argentina (Mendoza)',
       rights: 'Todos los derechos reservados.',
       ownedBy: 'Mendoza Reserve es una marca propiedad de, y administrada por, Puma Code.',
       designedBy: 'Diseño y desarrollo por',
+      collab: 'En colaboración con',
+      video: `Video aéreo © ${year} Aquila Aerial. Todos los derechos reservados. Usado con autorización.`,
     },
     en: {
-      tagline: 'Independent boutique wineries from Mendoza, direct to the UK market.',
-      salesUK: 'Sales — United Kingdom',
-      salesAR: 'Sales — Argentina (Mendoza)',
       rights: 'All rights reserved.',
       ownedBy: 'Mendoza Reserve is a brand owned and operated by Puma Code.',
       designedBy: 'Designed & developed by',
+      collab: 'In collaboration with',
+      video: `Aerial footage © ${year} Aquila Aerial. All rights reserved. Used with permission.`,
     },
   };
-
-  const c = t[lang] || t.en;
+  const c = t[lang] || t.es;
 
   return (
     <footer className="footer">
-      <div className="footer-top">
-        <div className="footer-container">
-
-          {/* Marca */}
-          <div className="footer-col footer-brand">
-            <img
-              src="/images/icon-maskable-512x512.png"
-              alt="Mendoza Reserve"
-              className="footer-brand-mark"
-            />
-            <div>
-              <p className="footer-brand-name">Mendoza Reserve</p>
-              <p className="footer-brand-sub">Boutique Wine Selections</p>
-              <p className="footer-tagline">{c.tagline}</p>
-            </div>
-          </div>
-
-          {/* Ventas Reino Unido */}
-          <div className="footer-col footer-contact-col">
-            <span className="footer-contact-label">🇬🇧 {c.salesUK}</span>
-            <a href="tel:+447562480662" className="footer-contact-line">
-              <FaPhoneAlt /> +44 7562 480662
+      <div className="footer-inner">
+        <div className="footer-side footer-side--left">
+          <img src="/landing/assets/logo-mark.png" alt="Mendoza Reserve" className="footer-brand-mark" />
+          <div className="footer-text">
+            <p className="footer-copy">
+              &copy; {year} Mendoza Reserve — Boutique Wine Selections. {c.rights}
+            </p>
+            <p className="footer-owned-by">{c.ownedBy}</p>
+            <a
+              href="https://www.puma-code.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-puma-credit"
+              aria-label="Puma Code — www.puma-code.com"
+            >
+              <span>{c.designedBy}</span>
+              <img src="/images/puma-code-logo.png" alt="Puma Code" className="footer-puma-logo" />
+              <span className="footer-puma-name">www.puma-code.com</span>
             </a>
           </div>
-
-          {/* Ventas Argentina (Mendoza) */}
-          <div className="footer-col footer-contact-col">
-            <span className="footer-contact-label">🇦🇷 {c.salesAR}</span>
-            <a href="tel:+542617730270" className="footer-contact-line">
-              <FaPhoneAlt /> +54 261 773 0270
-            </a>
-          </div>
-
         </div>
-      </div>
 
-      <div className="footer-bottom">
-        <div className="footer-bottom-inner">
-          <p className="footer-copy">
-            &copy; {year} Mendoza Reserve — Boutique Wine Selections. {c.rights}
-            <br />
-            <span className="footer-owned-by">{c.ownedBy}</span>
-          </p>
-
-          <a
-            href="https://www.puma-code.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer-puma-credit"
-            aria-label="Puma Code — www.puma-code.com"
-          >
-            <span className="footer-designed-by">{c.designedBy}</span>
-            <img
-              src="/images/puma-code-logo.png"
-              alt="Puma Code"
-              className="footer-puma-logo"
-            />
-            <span className="footer-puma-name">www.puma-code.com</span>
-          </a>
+        <div className="footer-side footer-side--right">
+          <div className="footer-text footer-text--right">
+            <p className="footer-collab">{c.collab}</p>
+            <p className="footer-owned-by">{c.video}</p>
+          </div>
+          <img src="/landing/assets/aquila-aerial-logo.png" alt="Aquila Aerial" className="footer-aquila-logo" />
         </div>
       </div>
     </footer>

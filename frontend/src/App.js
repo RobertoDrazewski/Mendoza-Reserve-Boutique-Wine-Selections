@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
@@ -7,14 +7,8 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './components/Home';
-import BodegasLista from './components/BodegasLista';
 import BodegaDetalle from './components/BodegaDetalle';
-import MapaBodegas from './components/MapaBodegas';
-import Vinos from './components/Vinos';
-import Historia from './components/Historia';
-import Contacto from './components/Contacto';
 import Login from './components/Login';
-import Register from './components/Register';
 import Carrito from './components/Carrito';
 import OrderTracking from './components/OrderTracking';
 import WineryOrderResponse from './components/WineryOrderResponse';
@@ -22,6 +16,8 @@ import AdminPanel from './components/admin/AdminPanel';
 import BodegaDashboard from './components/bodega/BodegaDashboard';
 import CloserDashboard from './components/closer/CloserDashboard';
 import MisPedidos from './components/MisPedidos';
+import VideoBackdrop from './components/VideoBackdrop';
+import FloatingCart from './components/FloatingCart';
 
 import './App.css';
 
@@ -31,20 +27,21 @@ function App() {
       <AuthProvider>
         <LanguageProvider>
           <CartProvider>
+            <VideoBackdrop />
             <div className="app-wrapper">
               <Navbar />
               <main className="main-content">
                 <Routes>
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/registro" element={<Register />} />
-
                   <Route path="/" element={<Home />} />
-                  <Route path="/bodegas" element={<BodegasLista />} />
+                  {/* Todo lo que antes eran páginas sueltas ahora vive dentro del Home, como secciones. */}
+                  <Route path="/register" element={<Navigate to="/#registro" replace />} />
+                  <Route path="/registro" element={<Navigate to="/#registro" replace />} />
+                  <Route path="/bodegas" element={<Navigate to="/#bodegas" replace />} />
+                  <Route path="/mapa" element={<Navigate to="/#bodegas" replace />} />
+                  <Route path="/vinos" element={<Navigate to="/#vinos" replace />} />
+                  <Route path="/historia" element={<Navigate to="/#historia" replace />} />
+                  <Route path="/contacto" element={<Navigate to="/#contacto" replace />} />
                   <Route path="/bodega/:id" element={<BodegaDetalle />} />
-                  <Route path="/mapa" element={<MapaBodegas />} />
-                  <Route path="/vinos" element={<Vinos />} />
-                  <Route path="/historia" element={<Historia />} />
-                  <Route path="/contacto" element={<Contacto />} />
                   <Route path="/login" element={<Login />} />
                   {/* Alias del mismo login unificado — usados en los links de los emails de
                       bienvenida (registerBodega/registerCloser) para que cada quien entienda
@@ -72,11 +69,12 @@ function App() {
                   <Route path="/admin" element={<AdminPanel />} />
 
                   {/* Redirección por defecto */}
-                  <Route path="*" element={<Home />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </main>
               <Footer />
             </div>
+            <FloatingCart />
           </CartProvider>
         </LanguageProvider>
       </AuthProvider>
