@@ -52,7 +52,7 @@ const Footer = () => {
         <div className="footer-side footer-side--left">
           <div className="footer-brand">
             <a href={PUMA.web} target="_blank" rel="noopener noreferrer" aria-label="Puma Code">
-              <img src="/images/puma-code-footer.png" alt="Puma Code" className="footer-logo footer-logo--puma" />
+              <img src="/images/puma-code-footer.png?v=2" alt="Puma Code" className="footer-logo footer-logo--puma" />
             </a>
             <Socials links={PUMA} name="Puma Code" />
           </div>
