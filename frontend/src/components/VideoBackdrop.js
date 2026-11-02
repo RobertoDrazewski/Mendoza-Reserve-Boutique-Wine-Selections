@@ -138,7 +138,7 @@ const VideoBackdrop = () => {
     refreshRef.current = refresh;
 
     const resize = () => {
-      const dpr = lite ? 1 : Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.25);
+      const dpr = lite ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(canvas.clientWidth * dpr);
       canvas.height = Math.round(canvas.clientHeight * dpr);
       lastDrawn = -1;

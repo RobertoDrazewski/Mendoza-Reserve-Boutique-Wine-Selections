@@ -16,17 +16,14 @@
   display: block;
 }
 
-/* Velo para que el texto siempre se lea sobre el video, sin apagarlo. */
+/* Velo mínimo: el video se ve con su color y nitidez originales. Sólo un toque arriba (navbar)
+   y abajo (footer); la legibilidad la dan los bloques de vidrio y las sombras de texto. */
 .mr-backdrop__shade {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(120% 90% at 50% 45%, rgba(20, 6, 10, 0) 35%, rgba(20, 6, 10, 0.5) 100%),
-    linear-gradient(180deg, rgba(20, 6, 10, 0.5) 0%, rgba(20, 6, 10, 0.08) 24%, rgba(20, 6, 10, 0.12) 60%, rgba(20, 6, 10, 0.58) 100%);
+  background: linear-gradient(180deg, rgba(20, 6, 10, 0.28) 0%, rgba(20, 6, 10, 0) 16%, rgba(20, 6, 10, 0) 82%, rgba(20, 6, 10, 0.3) 100%);
 }
 
 .mr-backdrop--dim .mr-backdrop__shade {
-  background:
-    radial-gradient(120% 90% at 50% 45%, rgba(20, 6, 10, 0.25) 30%, rgba(20, 6, 10, 0.7) 100%),
-    linear-gradient(180deg, rgba(20, 6, 10, 0.6), rgba(20, 6, 10, 0.5));
+  background: linear-gradient(180deg, rgba(20, 6, 10, 0.4), rgba(20, 6, 10, 0.32));
 }
