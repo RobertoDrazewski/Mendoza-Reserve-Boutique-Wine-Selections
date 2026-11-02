@@ -26,8 +26,8 @@
 .footer-brand a { display: block; line-height: 0; }
 
 /* Los dos logos comparten el mismo alto */
-.footer-logo { height: 60px; width: auto; display: block; }
-.footer-logo--puma { border-radius: 50%; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); }
+.footer-logo { height: 64px; width: auto; display: block; }
+.footer-logo--puma { filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5)); }
 .footer-logo--aquila { opacity: 0.95; }
 
 .footer-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
