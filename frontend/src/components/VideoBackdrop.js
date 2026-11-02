@@ -30,10 +30,16 @@ const VideoBackdrop = () => {
     const ctx = canvas.getContext('2d', { alpha: false });
     const mobile = window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Equipos modestos (pocos núcleos / poca RAM): menos resolución y sin efectos de desenfoque.
+    const lite = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+    document.documentElement.classList.toggle('mr-lite', lite);
     const TOTAL = mobile ? 84 : 150;
     const DIR = mobile ? DIR_MOBILE : DIR_DESKTOP;
 
-    const frames = new Array(TOTAL);
+    const frames = new Array(TOTAL);   // imágenes descargadas (sólo el archivo comprimido)
+    const bitmaps = new Array(TOTAL);  // cuadros ya decodificados, sólo los cercanos al actual
+    const pending = {};
+    const RADIUS = lite ? 8 : 12;
     let current = 0;
     let target = 0;
     let progress = 0;
@@ -41,24 +47,52 @@ const VideoBackdrop = () => {
     let raf = null;
     let alive = true;
 
-    const ready = (img) => img && img.complete && img.naturalWidth;
+    // Un cuadro está listo para dibujar si ya está decodificado (bitmap) o, al menos, descargado.
+    const src = (i) => {
+      if (bitmaps[i]) return bitmaps[i];
+      const img = frames[i];
+      return img && img.complete && img.naturalWidth ? img : null;
+    };
+    const dims = (o) => ({ w: o.naturalWidth || o.width, h: o.naturalHeight || o.height });
     const nearest = (i) => {
-      if (ready(frames[i])) return frames[i];
+      if (src(i)) return src(i);
       for (let d = 1; d < TOTAL; d += 1) {
-        if (ready(frames[i - d])) return frames[i - d];
-        if (ready(frames[i + d])) return frames[i + d];
+        if (src(i - d)) return src(i - d);
+        if (src(i + d)) return src(i + d);
       }
       return null;
+    };
+
+    // Decodifica por adelantado los cuadros vecinos (en ambas direcciones) y libera los lejanos.
+    // Así, al subir y bajar el scroll nunca hay que decodificar un WebP "en el momento".
+    const warm = (idx) => {
+      if (typeof createImageBitmap === 'undefined') return;
+      for (let i = 0; i < TOTAL; i += 1) {
+        if (Math.abs(i - idx) > RADIUS + 4 && bitmaps[i]) { bitmaps[i].close(); bitmaps[i] = null; }
+      }
+      for (let d = 0; d <= RADIUS; d += 1) {
+        [idx + d, idx - d].forEach((i) => {
+          const img = frames[i];
+          if (i < 0 || i >= TOTAL || bitmaps[i] || pending[i] || !img || !img.complete || !img.naturalWidth) return;
+          pending[i] = true;
+          createImageBitmap(img).then((bm) => {
+            pending[i] = false;
+            if (!alive || Math.abs(i - current) > RADIUS + 4) { bm.close(); return; }
+            bitmaps[i] = bm;
+          }).catch(() => { pending[i] = false; });
+        });
+      }
     };
 
     const draw = (idx) => {
       const img = nearest(idx);
       if (!img) return;
+      const { w: iw, h: ih } = dims(img);
       const cw = canvas.width;
       const ch = canvas.height;
-      const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight) * (1 + 0.07 * progress); // empuje lento
-      const w = img.naturalWidth * s;
-      const h = img.naturalHeight * s;
+      const s = Math.max(cw / iw, ch / ih) * (1 + 0.07 * progress); // empuje lento
+      const w = iw * s;
+      const h = ih * s;
       ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
     };
 
@@ -71,6 +105,7 @@ const VideoBackdrop = () => {
       if (idx !== lastDrawn) {
         draw(idx);
         lastDrawn = idx;
+        warm(idx);
       }
       if (current !== target) schedule(); // eslint-disable-line no-use-before-define
     };
@@ -92,7 +127,7 @@ const VideoBackdrop = () => {
     refreshRef.current = refresh;
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.25);
+      const dpr = lite ? 1 : Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.25);
       canvas.width = Math.round(canvas.clientWidth * dpr);
       canvas.height = Math.round(canvas.clientHeight * dpr);
       lastDrawn = -1;
@@ -111,7 +146,7 @@ const VideoBackdrop = () => {
       const loadOne = (n) => {
         const img = new Image();
         img.decoding = 'async';
-        img.onload = () => { active -= 1; if (Math.abs(n - current) < 3) lastDrawn = -1; schedule(); pump(); };
+        img.onload = () => { active -= 1; if (Math.abs(n - current) <= RADIUS) { lastDrawn = -1; } schedule(); pump(); };
         img.onerror = () => { active -= 1; pump(); };
         img.src = `${DIR}f_${String(n + 1).padStart(3, '0')}.webp`;
         frames[n] = img;
@@ -142,6 +177,7 @@ const VideoBackdrop = () => {
 
     return () => {
       alive = false;
+      bitmaps.forEach((b) => { if (b) b.close(); });
       if (raf) cancelAnimationFrame(raf);
       if (ro) ro.disconnect();
       window.removeEventListener('scroll', refresh);
