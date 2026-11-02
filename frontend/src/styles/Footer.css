@@ -1,4 +1,4 @@
-/* Pie fino y translúcido: deja ver el video detrás y alcanza justo para los logos. */
+/* Pie fino, simétrico y translúcido: Puma Code a la izquierda, Aquila Aerial a la derecha. */
 .footer {
   position: relative;
   z-index: 2;
@@ -21,31 +21,42 @@
   gap: 28px;
 }
 
-.footer-side { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.footer-brand-mark { width: 42px; height: 42px; border-radius: 10px; flex: 0 0 auto; }
+.footer-side { display: flex; align-items: center; gap: 18px; min-width: 0; }
+.footer-brand { display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 0 0 auto; }
+.footer-brand a { display: block; line-height: 0; }
+
+/* Los dos logos comparten el mismo alto */
+.footer-logo { height: 60px; width: auto; display: block; }
+.footer-logo--puma { border-radius: 50%; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); }
+.footer-logo--aquila { opacity: 0.95; }
+
 .footer-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .footer-text--right { text-align: right; align-items: flex-end; }
+.footer-text p { margin: 0; font-size: 0.7rem; line-height: 1.45; color: #cfb9b0; }
+.footer-collab { color: #e3cd98 !important; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.66rem !important; }
+.footer-link { color: #e3cd98; text-decoration: none; transition: color 0.3s ease; }
+.footer-link:hover { color: #fff; text-decoration: underline; }
 
-.footer-copy, .footer-owned-by, .footer-collab { margin: 0; font-size: 0.7rem; line-height: 1.4; color: #cfb9b0; }
-.footer-collab { color: #e3cd98; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.68rem; }
-
-.footer-puma-credit {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  color: #cfb9b0;
-  font-size: 0.7rem;
-  margin-top: 2px;
-  transition: color 0.3s ease;
+/* Iconos de redes: tono dorado apagado del pie, sin colores de marca */
+.footer-socials { display: flex; gap: 6px; }
+.footer-socials a {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: #c9a45c;
+  background: rgba(201, 164, 92, 0.08);
+  border: 1px solid rgba(201, 164, 92, 0.28);
+  transition: all 0.25s ease;
 }
-.footer-puma-credit:hover { color: #e3cd98; }
-.footer-puma-logo { height: 18px; width: auto; }
-.footer-puma-name { color: #e3cd98; }
-.footer-aquila-logo { height: 40px; width: auto; flex: 0 0 auto; border-radius: 6px; }
+.footer-socials a:hover { color: #2a0d14; background: #e3cd98; border-color: #e3cd98; transform: translateY(-2px); }
 
-@media (max-width: 800px) {
-  .footer-inner { flex-direction: column; align-items: flex-start; padding: 14px 18px; gap: 12px; }
-  .footer-side--right { flex-direction: row-reverse; }
+@media (max-width: 900px) {
+  .footer-inner { flex-direction: column; align-items: stretch; padding: 14px 18px; gap: 16px; }
+  .footer-side { gap: 14px; }
+  .footer-side--right { flex-direction: row-reverse; justify-content: flex-start; }
   .footer-text--right { text-align: left; align-items: flex-start; }
+  .footer-logo { height: 52px; }
 }

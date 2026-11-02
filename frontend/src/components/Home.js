@@ -495,8 +495,6 @@ const Home = () => {
     <div className="mr-home">
       <section id="top" className="mr-hero">
         <div className="mr-hero__in">
-          <img className="mr-hero__logo" src="/images/mendoza-reserve-logo-gold.png" alt="Mendoza Reserve" onError={(e) => { e.target.onerror = null; e.target.src = '/landing/assets/logo-mark.png'; }} />
-          <p className="mr-eyebrow">{c.tagline}</p>
           <h1>{c.h1a}<br /><em>{c.h1b}</em></h1>
           <p className="mr-lead">{c.lead}</p>
           <div className="mr-cta">

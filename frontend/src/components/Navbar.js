@@ -126,8 +126,8 @@ const Navbar = () => {
                     aria-label="Mendoza Reserve"
                     onClick={() => { if (isHome) window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 >
-                    <img src="/landing/assets/logo-mark.png" alt="" width="38" height="38" />
-                    <span>Mendoza Reserve</span>
+                    <img src="/images/mendoza-reserve-logo-nav.png" alt="Mendoza Reserve" height="46" />
+                    <span className="navbar-brand__tag">Boutique Wine Selections</span>
                 </Link>
 
                 <div className={`navbar-menu ${open ? 'is-open' : ''}`}>{menuLinks}</div>
