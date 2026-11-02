@@ -65,22 +65,24 @@ const VideoBackdrop = () => {
 
     // Decodifica por adelantado los cuadros vecinos (en ambas direcciones) y libera los lejanos.
     // Así, al subir y bajar el scroll nunca hay que decodificar un WebP "en el momento".
+    const decodeOne = (i) => {
+      const img = frames[i];
+      if (i < 0 || i >= TOTAL || bitmaps[i] || pending[i] || !img || !img.complete || !img.naturalWidth) return;
+      pending[i] = true;
+      createImageBitmap(img).then((bm) => {
+        pending[i] = false;
+        if (!alive || Math.abs(i - current) > RADIUS + 4) { bm.close(); return; }
+        bitmaps[i] = bm;
+      }).catch(() => { pending[i] = false; });
+    };
     const warm = (idx) => {
       if (typeof createImageBitmap === 'undefined') return;
       for (let i = 0; i < TOTAL; i += 1) {
         if (Math.abs(i - idx) > RADIUS + 4 && bitmaps[i]) { bitmaps[i].close(); bitmaps[i] = null; }
       }
       for (let d = 0; d <= RADIUS; d += 1) {
-        [idx + d, idx - d].forEach((i) => {
-          const img = frames[i];
-          if (i < 0 || i >= TOTAL || bitmaps[i] || pending[i] || !img || !img.complete || !img.naturalWidth) return;
-          pending[i] = true;
-          createImageBitmap(img).then((bm) => {
-            pending[i] = false;
-            if (!alive || Math.abs(i - current) > RADIUS + 4) { bm.close(); return; }
-            bitmaps[i] = bm;
-          }).catch(() => { pending[i] = false; });
-        });
+        decodeOne(idx + d);
+        decodeOne(idx - d);
       }
     };
 
