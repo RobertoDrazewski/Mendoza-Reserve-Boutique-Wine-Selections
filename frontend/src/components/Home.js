@@ -29,10 +29,13 @@ const ZONA_COORDS = {
 const ZONA_FALLBACK = [-33.6, -68.9];
 const coordsForZona = (z) => (!z ? ZONA_FALLBACK : ZONA_COORDS[z] || ZONA_COORDS[z.split('/')[0].trim()] || ZONA_FALLBACK);
 
-const TILE_LAYERS = {
-  satelital: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attribution: 'Tiles &copy; Esri', maxZoom: 19 },
-  calles: { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '&copy; OpenStreetMap', maxZoom: 19 },
-};
+// Mapa híbrido fijo: imagen satelital + rutas/calles + nombres de lugares (todo de Esri, sin API key).
+const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services';
+const HYBRID_LAYERS = [
+  { url: `${ESRI}/World_Imagery/MapServer/tile/{z}/{y}/{x}`, maxZoom: 19, attribution: 'Tiles &copy; Esri, Maxar, Earthstar Geographics', pane: 'tilePane' },
+  { url: `${ESRI}/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}`, maxZoom: 19, opacity: 0.9 },
+  { url: `${ESRI}/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}`, maxZoom: 19 },
+];
 
 const DEFAULT_GRAPES = ['Malbec', 'Cabernet Sauvignon', 'Cabernet Franc', 'Bonarda', 'Syrah', 'Chardonnay', 'Torrontés', 'Pinot Noir'];
 
@@ -168,10 +171,8 @@ const Bodegas = ({ c, lang }) => {
   const [q, setQ] = useState('');
   const [zona, setZona] = useState('');
   const [uva, setUva] = useState('');
-  const [vista, setVista] = useState('satelital');
   const mapEl = useRef(null);
   const mapRef = useRef(null);
-  const tileRef = useRef(null);
   const markersRef = useRef(null);
 
   useEffect(() => {
@@ -223,6 +224,7 @@ const Bodegas = ({ c, lang }) => {
     if (!mapEl.current || mapRef.current) return undefined;
     const map = L.map(mapEl.current, { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false, zoomControl: true }).setView([-33.6, -68.9], 8);
     mapRef.current = map;
+    HYBRID_LAYERS.forEach((l) => L.tileLayer(l.url, { maxZoom: l.maxZoom, attribution: l.attribution, opacity: l.opacity }).addTo(map));
     markersRef.current = L.featureGroup().addTo(map);
     const onClick = (e) => {
       const a = e.target.closest && e.target.closest('a[data-nav]');
@@ -234,15 +236,6 @@ const Bodegas = ({ c, lang }) => {
     if (ro) ro.observe(el);
     return () => { el.removeEventListener('click', onClick); if (ro) ro.disconnect(); map.remove(); mapRef.current = null; };
   }, [navigate]);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    if (tileRef.current) map.removeLayer(tileRef.current);
-    const capa = TILE_LAYERS[vista];
-    tileRef.current = L.tileLayer(capa.url, { attribution: capa.attribution, maxZoom: capa.maxZoom }).addTo(map);
-    tileRef.current.bringToBack();
-  }, [vista]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -343,10 +336,6 @@ const Bodegas = ({ c, lang }) => {
 
         <Reveal effect="right" delay={120} className="mr-glass mr-bod__map">
           <div ref={mapEl} className="mr-map" />
-          <div className="mr-map__toggle">
-            <button type="button" className={vista === 'satelital' ? 'on' : ''} onClick={() => setVista('satelital')}>🛰 {c.mapSat}</button>
-            <button type="button" className={vista === 'calles' ? 'on' : ''} onClick={() => setVista('calles')}>🗺 {c.mapStreets}</button>
-          </div>
         </Reveal>
       </div>
     </section>
