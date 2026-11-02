@@ -31,7 +31,8 @@ const VideoBackdrop = () => {
     const mobile = window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Equipos modestos (pocos núcleos / poca RAM): menos resolución y sin efectos de desenfoque.
-    const lite = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+    const forceHQ = /[?&]hq(=|&|$)/.test(window.location.search); // ?hq=1 prueba la calidad máxima
+    const lite = !forceHQ && ((navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4);
     document.documentElement.classList.toggle('mr-lite', lite);
     const light = mobile || lite; // cuadros de 960px: 3x menos memoria al decodificar
     const TOTAL = light ? 84 : 150;
@@ -88,22 +89,11 @@ const VideoBackdrop = () => {
       try { ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h); } catch (e) { /* cuadro aún no listo */ }
     };
 
-    // Entre dos cuadros reales se mezcla el siguiente con transparencia proporcional a la
-    // parte decimal de la posición: el recorrido se ve continuo, como video, sin más descargas.
-    const draw = (pos) => {
-      const i0 = clamp(Math.floor(pos), 0, TOTAL - 1);
-      const f = pos - i0;
-      const a = nearest(i0);
-      if (!a) return;
-      const scale = 1 + 0.07 * progress; // empuje lento
-      ctx.globalAlpha = 1;
-      paint(a, scale);
-      const b = i0 + 1 < TOTAL ? src(i0 + 1) : null;
-      if (b && f > 0.02) {
-        ctx.globalAlpha = f;
-        paint(b, scale);
-        ctx.globalAlpha = 1;
-      }
+    // Un solo cuadro nítido por vez (sin mezclar cuadros: mezclarlos superpone imágenes y desenfoca).
+    const draw = (idx) => {
+      const img = nearest(idx);
+      if (!img) return;
+      paint(img, 1 + 0.07 * progress); // empuje lento
     };
 
     const tick = () => {
@@ -111,12 +101,11 @@ const VideoBackdrop = () => {
       if (!alive) return;
       current += (target - current) * 0.18; // la inercia da el efecto de vuelo
       if (Math.abs(target - current) < 0.01) current = target;
-      const pos = clamp(current, 0, TOTAL - 1);
-      const key = Math.round(pos * 8); // un repintado cada 1/8 de cuadro
-      if (key !== lastDrawn) {
-        draw(pos);
-        lastDrawn = key;
-        warm(Math.round(pos));
+      const idx = clamp(Math.round(current), 0, TOTAL - 1);
+      if (idx !== lastDrawn) {
+        draw(idx);
+        lastDrawn = idx;
+        warm(idx);
       }
       if (current !== target) schedule(); // eslint-disable-line no-use-before-define
     };
