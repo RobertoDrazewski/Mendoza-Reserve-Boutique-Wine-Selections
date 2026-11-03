@@ -8,6 +8,23 @@
   background-color: #240b13;
 }
 
+.mr-backdrop__stage {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.mr-backdrop__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
 .mr-backdrop__canvas {
   position: absolute;
   inset: 0;
